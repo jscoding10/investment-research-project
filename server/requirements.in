@@ -1,0 +1,28 @@
+# Core framework
+fastapi
+uvicorn[standard]
+
+# LangChain ecosystem 
+langchain-core
+langchain
+langchain-groq
+langgraph
+# langgraph-cli[inmem]         
+
+# Data / finance
+pandas_datareader
+yfinance
+numpy                      
+
+# Validation & types
+pydantic
+
+# Testing & development
+pytest
+ipython
+
+# Env
+python-dotenv
+
+# Diagramming 
+mermaid-cli
