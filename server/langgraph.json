@@ -1,0 +1,7 @@
+{
+  "dependencies": ["./"],
+  "graphs": {
+    "equity_research": "./graph.py:graph_workflow"
+  },
+  "env": ".env"
+}
