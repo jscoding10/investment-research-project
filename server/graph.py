@@ -1,0 +1,211 @@
+from langchain_core.runnables import RunnableLambda
+from langgraph.graph import END, StateGraph, START
+from langgraph.cache.memory import InMemoryCache
+from dotenv import load_dotenv
+from fastapi import HTTPException
+
+
+from agents.news.agent import get_news_sentiment
+from agents.industry.agent import get_industry_sentiment
+from agents.aggregation.agent import get_aggregated_sentiment
+from logger import get_logger
+from models.state import EquityResearchState
+from agents.fundamentals.agent import get_fundamental_sentiment
+from agents.macro.agent import get_macro_sentiment
+from agents.technical.agent import get_technical_sentiment
+from util import create_cache_policy, validate_ticker
+
+load_dotenv()
+logger = get_logger(__name__)
+
+
+# graph nodes
+def ticker_validation(state: EquityResearchState) -> dict:
+    """Validation node to ensure we have a real ticker"""
+    logger.info(f"Validating ticker: {state.ticker}")
+    result = validate_ticker(ticker=state.ticker, state=state)
+    logger.info(f"Ticker validation complete for {state.ticker}")
+    return result
+ 
+
+def ticker_router(state: EquityResearchState):
+    if state.is_ticker_valid:
+        return [
+            "fundamental_research_agent",
+            "technical_research_agent",
+            "macro_research_agent",
+            "industry_research_agent",
+            "news_research_agent",
+        ]
+    else:
+        return END
+
+
+def fundamental_research_agent(state: EquityResearchState) -> dict:
+    """LLM call to generate fundamental research sentiment"""
+    logger.info(f"Starting fundamental research for {state.ticker}")
+    fundamental_sentiment = get_fundamental_sentiment(
+        ticker=state.ticker,
+    )
+    logger.info(f"Completed fundamental research for {state.ticker}")
+    return {"fundamental_sentiment": fundamental_sentiment}
+
+
+def technical_research_agent(state: EquityResearchState) -> dict:
+    """LLM call to generate technical research sentiment"""
+    logger.info(f"Starting technical research for {state.ticker}")
+    technical_sentiment = get_technical_sentiment(
+        ticker=state.ticker,
+    )
+    logger.info(f"Completed technical research for {state.ticker}")
+    return {"technical_sentiment": technical_sentiment}
+
+
+def macro_research_agent(state: EquityResearchState) -> dict:
+    """LLM call to generate macro research sentiment"""
+    logger.info("Starting macro research")
+    macro_sentiment = get_macro_sentiment()
+    logger.info("Completed macro research")
+    return {"macro_sentiment": macro_sentiment}
+
+
+def industry_research_agent(state: EquityResearchState) -> dict:
+    """LLM call to generate technical research sentiment"""
+    logger.info(f"Starting industry research for {state.ticker}")
+    industry_sentiment = get_industry_sentiment(
+        ticker=state.ticker,
+    )
+    logger.info(f"Completed industry research for {state.ticker}")
+    return {"industry_sentiment": industry_sentiment}
+
+
+def news_research_agent(state: EquityResearchState) -> dict:
+    """LLM call to generate technical research sentiment"""
+    logger.info(f"Starting news research for {state.ticker}")
+    news_sentiment = get_news_sentiment(
+        ticker=state.ticker,
+    )
+    logger.info(f"Completed news research for {state.ticker}")
+    return {"news_sentiment": news_sentiment}
+
+
+def sentiment_aggregator(state: EquityResearchState) -> dict:
+    """LLM call to aggregate research findings and synthesize sentiment"""
+    logger.info(f"Starting sentiment aggregation for {state.ticker}")
+    combined_sentiment = get_aggregated_sentiment(state)
+    logger.info(f"Completed sentiment aggregation for {state.ticker}")
+    return {"combined_sentiment": combined_sentiment}
+
+
+# build workflow
+graph_builder = StateGraph(EquityResearchState)
+
+# add agent nodes
+graph_builder.add_node("ticker_validation", ticker_validation)
+
+graph_builder.add_node(
+    "fundamental_research_agent",
+    fundamental_research_agent,
+    # evict fundamentals cache after one houe
+    # todo: get smart about dynamic cache eviction; set ttl based on last earnings release for ticker
+    cache_policy=create_cache_policy(ttl=3600),
+)
+graph_builder.add_node(
+    "technical_research_agent",
+    technical_research_agent,
+    # evict technical research cache after 5 minutes
+    cache_policy=create_cache_policy(ttl=300),
+)
+graph_builder.add_node(
+    "macro_research_agent",
+    macro_research_agent,
+    # evict macro research cache after one hour
+    # todo: get smart about dynamic cache eviction; set ttl based on last fed report issuance
+    cache_policy=create_cache_policy(ttl=3600, static_key="macro_research"),
+)
+graph_builder.add_node(
+    "industry_research_agent",
+    industry_research_agent,
+    # evict industry research cache after one hour
+    cache_policy=create_cache_policy(ttl=3600),
+)
+
+graph_builder.add_node(
+    "news_research_agent",
+    news_research_agent,
+    # evict news research cache after one hour
+    cache_policy=create_cache_policy(ttl=3600),
+)
+graph_builder.add_node(
+    "aggregator",
+    sentiment_aggregator,
+)
+
+# call research agents in parallel when ticker validation passes, otherwise end
+
+graph_builder.add_edge(START, "ticker_validation")
+graph_builder.add_conditional_edges(
+    "ticker_validation",
+    ticker_router,
+    [
+        "fundamental_research_agent",
+        "technical_research_agent",
+        "macro_research_agent",
+        "industry_research_agent",
+        "news_research_agent",
+        END,
+    ],
+)
+
+# synthesize sentiment
+graph_builder.add_edge("fundamental_research_agent", "aggregator")
+graph_builder.add_edge("technical_research_agent", "aggregator")
+graph_builder.add_edge("macro_research_agent", "aggregator")
+graph_builder.add_edge("industry_research_agent", "aggregator")
+graph_builder.add_edge("news_research_agent", "aggregator")
+
+# terminate graph
+graph_builder.add_edge("aggregator", END)
+
+# compile the graph workflow with node caching
+cache = InMemoryCache()
+
+graph_workflow = graph_builder.compile(cache=cache)
+
+# uncomment to regenerate architectural diagram
+
+# try:
+#     png_data = graph_workflow.get_graph().draw_mermaid_png()
+#     with open("architecture.png", "wb") as f:
+#         f.write(png_data)
+# except Exception as e:
+#     print(f"Error generating architecture.png: {e}")
+#     # Fallback to writing mermaid text
+#     with open("architecture.mmd", "w") as f:
+#         f.write(graph_workflow.get_graph().draw_mermaid())
+
+
+def input(input_dict: dict) -> EquityResearchState:
+    state = EquityResearchState(
+        ticker=input_dict["ticker"],
+        fundamental_sentiment="",
+        technical_sentiment="",
+        macro_sentiment="",
+        industry_sentiment="",
+        news_sentiment="",
+        combined_sentiment="",
+    )
+    return state
+
+
+def output(state: dict | EquityResearchState) -> EquityResearchState:
+    if isinstance(state, dict):
+        state = EquityResearchState(**state)
+
+    if not state.is_ticker_valid:
+        raise HTTPException(status_code=400, detail=f"Ticker {state.ticker} is invalid")
+    return state
+
+
+# pipeline to interface with the API
+research_chain = RunnableLambda(input) | graph_workflow | RunnableLambda(output)
