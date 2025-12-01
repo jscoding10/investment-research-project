@@ -1,0 +1,125 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# C extensions / build artifacts
+*.egg-info/
+.dist-info/
+*.egg
+.Python
+build/
+develop-eggs/
+dist/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+
+# Installer / packaging logs
+pip-log.txt
+pip-delete-this-directory.txt
+MANIFEST
+*.manifest
+*.spec
+.installed.cfg
+
+# Unit test / coverage reports (pytest, coverage.py)
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+.pytest_cache/
+.hypothesis/
+nosetests.xml
+coverage.xml
+*.cover
+cover/
+
+# Translations
+*.mo
+*.pot
+
+# Jupyter / IPython notebooks
+.ipynb_checkpoints
+profile_default/
+ipython_config.py
+
+# Environments (virtualenvs)
+.env
+.envrc
+.venv/
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+__pypackages__/
+
+# Logs (app, server, general)
+*.log
+logs/
+
+# Database (SQLite, etc. – for local dev DBs)
+*.db
+*.sqlite
+*.sqlite3
+db.sqlite3-journal
+
+# Static / cache files (FastAPI, web assets)
+.webassets-cache
+instance/
+.site  # MkDocs/Sphinx docs build
+
+# Type checkers / linters (mypy, Pyre, pytype, Ruff – 2025 essentials)
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+.pytype/
+.ruff_cache/
+
+# IDE / Editor (VS Code, PyCharm, etc. – merge globals if needed)
+.vscode/settings.json  # Project-specific VS Code settings (keep .vscode/ for extensions if shared)
+.idea/  # PyCharm (uncomment if using; otherwise delete)
+.spyderproject
+.spyproject
+.ropeproject
+.cursorignore  # Cursor AI editor (2025 hotness)
+.cursorindexingignore
+
+# Marimo (interactive notebooks – rising in 2025 for data/AI workflows)
+marimo/_static/
+marimo/_lsp/
+__marimo__/
+
+# LangGraph / LangChain specifics (agents, traces, checkpoints)
+.langgraph_api/
+.langgraph_cache/  # Traces and runtime caches
+*.langgraph  # Checkpoint files
+checkpoints/  # If using persistent graph state
+
+# ML / Data artifacts (pickles, models – common in LangGraph + yfinance/pandas setups)
+*.pkl
+*.joblib
+models/  # Local model checkpoints (commit shared ones explicitly)
+
+# OS generated
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Abstra (AI process automation – optional, if using)
+.abstra/
+
+# PyPI config (secrets)
+.pypirc
