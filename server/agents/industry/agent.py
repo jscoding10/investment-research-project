@@ -9,17 +9,18 @@ from agents.industry.tools import search_industry_tool
 
 dotenv.load_dotenv()
 
-def get_industry_sentiment(ticker: str) -> str:
+def get_industry_sentiment(ticker: str, industry: str) -> str:
     """
     Get industry sentiment using Groq + Tavily search tool.
     Analyzes sector trends, competition, and tailwinds/headwinds from recent reports.
     """
 
     current_date = datetime.now().strftime("%Y-%m-%d")
-    cutoff_date = (datetime.now() - timedelta(days=30)).strftime("%Y-%m-%d")
+    cutoff_date = (datetime.now() - timedelta(days=60)).strftime("%Y-%m-%d")
 
     prompt = industry_research_prompt.format(
         ticker=ticker,
+        industry=industry,
         current_date=current_date,
         cutoff_date=cutoff_date,
     )

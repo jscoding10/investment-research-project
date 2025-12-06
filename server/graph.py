@@ -74,6 +74,7 @@ def industry_research_agent(state: EquityResearchState) -> dict:
     logger.info(f"Starting industry research for {state.ticker}")
     industry_sentiment = get_industry_sentiment(
         ticker=state.ticker,
+        industry=state.industry
     )
     logger.info(f"Completed industry research for {state.ticker}")
     return {"industry_sentiment": industry_sentiment}
@@ -81,11 +82,11 @@ def industry_research_agent(state: EquityResearchState) -> dict:
 
 def news_research_agent(state: EquityResearchState) -> dict:
     """LLM call to generate technical research sentiment"""
-    logger.info(f"Starting news research for {state.ticker}")
+    logger.info(f"Starting headline research for {state.business}")
     news_sentiment = get_news_sentiment(
         ticker=state.ticker,
     )
-    logger.info(f"Completed news research for {state.ticker}")
+    logger.info(f"Completed headline research for {state.business}")
     return {"news_sentiment": news_sentiment}
 
 
