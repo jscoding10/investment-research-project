@@ -12,7 +12,7 @@ sentiment_evaluator_prompt = """
     - Technical: [key takeaways]
     - Macro: [key takeaways]
     - Industry: [key takeaways]
-    - Headline: [key takeaways]
+    - News: [key takeaways]
 
     Consensus and Divergence:
     - Consensus: [content]  
@@ -21,7 +21,7 @@ sentiment_evaluator_prompt = """
     Weighting of Perspectives:
     - Fundamental [percentage and explanation]
     - Industry [percentage and explanation] 
-    - Headline [percentage and explanation] 
+    - News [percentage and explanation] 
     - Macro [percentage and explanation]
     - Technical [percentage and explanation]
     

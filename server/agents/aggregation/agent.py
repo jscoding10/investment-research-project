@@ -18,11 +18,12 @@ def get_aggregated_sentiment(state: EquityResearchState):
         prompt = f"{research_aggregation_prompt}\n\nAggregate the following equity research:\n\n"
         prompt += f"Ticker: {state.ticker}\n"
         prompt += f"Trade Duration: {state.trade_duration.value}\n"
+        prompt += f"Trade Direction: {state.trade_direction.value}"
         prompt += f"Fundamental Analysis:\n{state.fundamental_sentiment}\n\n"
         prompt += f"Technical Analysis:\n{state.technical_sentiment}\n\n"
         prompt += f"Macro Analysis:\n{state.macro_sentiment}\n\n"
         prompt += f"Industry Analysis:\n{state.industry_sentiment}\n\n"
-        prompt += f"Headline Analysis:\n{state.headline_sentiment}\n\n"
+        prompt += f"News Analysis:\n{state.news_sentiment}\n\n"
 
     model = LLM_MODELS["groq-llama"]
     # Slight creativity allowed for synthesis & narrative
