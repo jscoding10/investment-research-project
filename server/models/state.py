@@ -19,4 +19,7 @@ class EquityResearchState(BaseModel):
     industry_sentiment: Optional[str] = None
     news_sentiment: Optional[str] = None
     combined_sentiment: Optional[str] = None
+    compliant: bool = False
+    feedback: Optional[str] = None
     is_ticker_valid: bool = False
+    aggregation_retry_count: int = 0
