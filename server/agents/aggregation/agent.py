@@ -22,6 +22,7 @@ def get_aggregated_sentiment(state: EquityResearchState):
         prompt += f"Fundamental Analysis:\n{state.fundamental_sentiment}\n\n"
         prompt += f"Technical Analysis:\n{state.technical_sentiment}\n\n"
         prompt += f"Macro Analysis:\n{state.macro_sentiment}\n\n"
+        prompt += f"Peer Analysis:\n{state.peer_sentiment}\n\n"
         prompt += f"Industry Analysis:\n{state.industry_sentiment}\n\n"
         prompt += f"News Analysis:\n{state.news_sentiment}\n\n"
 

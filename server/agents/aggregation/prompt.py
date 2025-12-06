@@ -7,7 +7,8 @@ research_aggregation_prompt = """
     2. TECHNICAL SENTIMENT - Analysis of price trends, momentum indicators, and chart patterns
     3. MACRO SENTIMENT - Analysis of broader economic conditions, monetary policy, and market environment
     4. INDUSTRY SENTIMENT - Analysis of sector-specific trends, competitive dynamics, and industry tailwinds/headwinds
-    5. NEWS SENTIMENT - Analysis of recent news, events, and market sentiment surrounding the stock
+    5. PEER SENTIMENT - Analysis of key competitors, relative valuation, and performance comparison
+    6. NEWS SENTIMENT - Analysis of recent news, events, and market sentiment surrounding the stock
 
     You will receive a "Trade Duration" (e.g., day_trade, swing_trade, position_trade). You MUST dynamically weight the perspectives based on this duration:
     - day_trade: Prioritize Technical and News sentiment. Fundamentals and Macro are less relevant.

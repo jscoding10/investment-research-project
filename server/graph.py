@@ -8,6 +8,7 @@ from agents.evaluation.agent import evaluate_aggregated_sentement
 from agents.news.agent import get_news_sentiment
 from agents.industry.agent import get_industry_sentiment
 from agents.aggregation.agent import get_aggregated_sentiment
+from agents.peer.agent import get_peer_sentiment
 from logger import get_logger
 from models.state import EquityResearchState
 from agents.fundamentals.agent import get_fundamental_sentiment
@@ -35,6 +36,7 @@ def ticker_router(state: EquityResearchState):
             "technical_research_agent",
             "macro_research_agent",
             "industry_research_agent",
+            "peer_research_agent",
             "news_research_agent",
         ]
     else:
@@ -72,12 +74,18 @@ def macro_research_agent(state: EquityResearchState) -> dict:
 def industry_research_agent(state: EquityResearchState) -> dict:
     """LLM call to generate technical research sentiment"""
     logger.info(f"Starting industry research for {state.ticker}")
-    industry_sentiment = get_industry_sentiment(
-        ticker=state.ticker,
-        industry=state.industry
+    industry_sentiment = get_industry_sentiment(  
+        ticker=state.ticker,     
     )
     logger.info(f"Completed industry research for {state.ticker}")
     return {"industry_sentiment": industry_sentiment}
+
+def peer_research_agent(state: EquityResearchState) -> dict:
+    """LLM call to generate peer research sentiment"""
+    logger.info(f"Starting peer research for {state.business}")
+    peer_sentiment = get_peer_sentiment(ticker=state.ticker)
+    logger.info(f"Completed peer research for {state.business}")
+    return {"peer_sentiment": peer_sentiment}
 
 
 def news_research_agent(state: EquityResearchState) -> dict:
@@ -85,6 +93,7 @@ def news_research_agent(state: EquityResearchState) -> dict:
     logger.info(f"Starting headline research for {state.business}")
     news_sentiment = get_news_sentiment(
         ticker=state.ticker,
+        business=state.business
     )
     logger.info(f"Completed headline research for {state.business}")
     return {"news_sentiment": news_sentiment}
@@ -157,6 +166,13 @@ graph_builder.add_node(
 )
 
 graph_builder.add_node(
+    "peer_research_agent",
+    peer_research_agent,
+    # evict peer research cache after one hour
+    cache_policy=create_cache_policy(ttl=3600),
+)
+
+graph_builder.add_node(
     "news_research_agent",
     news_research_agent,
     # evict news research cache after one hour
@@ -167,6 +183,8 @@ graph_builder.add_node(
     "aggregator",
     sentiment_aggregator,
 )
+
+graph_builder.add_node("evaluator", sentiment_evaluator)
 
 # call research agents in parallel when ticker validation passes, otherwise end
 
@@ -179,6 +197,7 @@ graph_builder.add_conditional_edges(
         "technical_research_agent",
         "macro_research_agent",
         "industry_research_agent",
+        "peer_research_agent",
         "news_research_agent",
         END,
     ],
@@ -189,9 +208,8 @@ graph_builder.add_edge("fundamental_research_agent", "aggregator")
 graph_builder.add_edge("technical_research_agent", "aggregator")
 graph_builder.add_edge("macro_research_agent", "aggregator")
 graph_builder.add_edge("industry_research_agent", "aggregator")
+graph_builder.add_edge("peer_research_agent", "aggregator")
 graph_builder.add_edge("news_research_agent", "aggregator")
-
-# evaluation-optimization feedback loop with configured iteraation count
 graph_builder.add_edge("aggregator", "evaluator")
 graph_builder.add_conditional_edges(
     "evaluator", sentiment_router, {"Compliant": END, "Noncompliant": "aggregator"}
@@ -212,14 +230,18 @@ def input(input_dict: dict) -> EquityResearchState:
         ticker=input_dict["ticker"],
         trade_duration=input_dict["trade_duration"],
         trade_direction=input_dict["trade_direction"],
+        industry="",
+        business="",
         fundamental_sentiment="",
         technical_sentiment="",
         macro_sentiment="",
         industry_sentiment="",
+        peer_sentiment="",
         news_sentiment="",
         combined_sentiment="",
         compliant=False,
         feedback=None,
+        is_ticker_valid=False,
         revision_iteration_count=0,
     )
     return state
