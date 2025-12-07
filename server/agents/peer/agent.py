@@ -9,7 +9,7 @@ from agents.peer.tools import search_peer_tool
 
 dotenv.load_dotenv()
 
-def get_peer_sentiment(ticker: str) -> str:
+def get_peer_sentiment(ticker: str, business: str) -> str:
     """
     Get peer-relative sentiment using only ticker (30-day window).
     Matches industry agent structure exactly.
@@ -19,18 +19,18 @@ def get_peer_sentiment(ticker: str) -> str:
 
     prompt = peer_research_prompt.format(
         ticker=ticker,
+        business=business,
         current_date=current_date,
         cutoff_date=cutoff_date,
     )
 
-    model = LLM_MODELS["groq-llama"]  # or switch to llama-3.1-70b-versatile if throttled
+    model = LLM_MODELS["groq-llama"] 
 
     llm = ChatGroq(model=model, temperature=0.0)
 
     tools = [search_peer_tool]
     result = run_agent_with_tools(llm=llm, prompt=prompt, tools=tools)
 
-    # Fallback — same style as industry
     if not result or result.strip() == "" or "error" in result.lower():
         return "[NEUTRAL]\nLimited peer comparison data in last 30 days — stock likely tracking peers.\nConfidence: Low"
 

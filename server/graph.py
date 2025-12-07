@@ -75,7 +75,8 @@ def industry_research_agent(state: EquityResearchState) -> dict:
     """LLM call to generate technical research sentiment"""
     logger.info(f"Starting industry research for {state.ticker}")
     industry_sentiment = get_industry_sentiment(  
-        ticker=state.ticker,     
+        ticker=state.ticker,
+        industry=state.industry     
     )
     logger.info(f"Completed industry research for {state.ticker}")
     return {"industry_sentiment": industry_sentiment}
@@ -83,7 +84,7 @@ def industry_research_agent(state: EquityResearchState) -> dict:
 def peer_research_agent(state: EquityResearchState) -> dict:
     """LLM call to generate peer research sentiment"""
     logger.info(f"Starting peer research for {state.business}")
-    peer_sentiment = get_peer_sentiment(ticker=state.ticker)
+    peer_sentiment = get_peer_sentiment(ticker=state.ticker, business=state.business)
     logger.info(f"Completed peer research for {state.business}")
     return {"peer_sentiment": peer_sentiment}
 

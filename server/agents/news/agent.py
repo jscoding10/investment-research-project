@@ -11,7 +11,7 @@ from agents.news.tools import search_news_tool
 dotenv.load_dotenv()
 
 
-def get_news_sentiment(business: str):
+def get_news_sentiment(ticker: str, business: str):
     """
     Get news sentiment using Groq + Tavily search tool.
     Groq analyzes the fetched news for bullish/bearish/neutral.
@@ -21,6 +21,7 @@ def get_news_sentiment(business: str):
     cutoff_date = (datetime.now() - timedelta(days=30)).strftime("%Y-%m-%d")
 
     prompt = news_research_prompt.format(
+        ticker=ticker,
         business=business,
         current_date=current_date,
         cutoff_date=cutoff_date,
@@ -29,11 +30,9 @@ def get_news_sentiment(business: str):
 
     llm = ChatGroq(
         model=model,
-        temperature=0.0,  # Low randomness for consistent analysis
-        # api_key automatically loaded from .env → GROQ_API_KEY
+        temperature=0.0, 
     )
 
-    # Run with the search tool (Groq will call it automatically if needed)
     tools = [search_news_tool]
     result = run_agent_with_tools(llm=llm, prompt=prompt, tools=tools)
 
