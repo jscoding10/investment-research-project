@@ -85,7 +85,6 @@ def peer_research_agent(state: EquityResearchState) -> dict:
     """LLM call to generate peer research sentiment"""
     logger.info(f"Starting peer research for {state.business}")
     peer_sentiment = get_peer_sentiment(ticker=state.ticker, business=state.business)
-    peer_sentiment = get_peer_sentiment(ticker=state.ticker)
     logger.info(f"Completed peer research for {state.business}")
     return {"peer_sentiment": peer_sentiment}
 
