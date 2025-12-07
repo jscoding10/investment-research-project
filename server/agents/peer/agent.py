@@ -9,7 +9,7 @@ from agents.peer.tools import search_peer_tool
 
 dotenv.load_dotenv()
 
-def get_peer_sentiment(ticker: str) -> str:
+def get_peer_sentiment(ticker: str, business: str) -> str:
     """
     Get peer-relative sentiment using only ticker (30-day window).
     Matches industry agent structure exactly.
@@ -19,6 +19,7 @@ def get_peer_sentiment(ticker: str) -> str:
 
     prompt = peer_research_prompt.format(
         ticker=ticker,
+        business=business,
         current_date=current_date,
         cutoff_date=cutoff_date,
     )
