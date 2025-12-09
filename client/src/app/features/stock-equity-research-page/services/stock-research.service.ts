@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { StocksState, StockReport, StockRequest } from '../state/stock-state';
 import { finalize } from 'rxjs';
 import { StockEquityResearchStateService } from './stock-equity-research-state.service';
+import { environment } from '../../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -10,6 +11,8 @@ import { StockEquityResearchStateService } from './stock-equity-research-state.s
 export class StockResearchService {
   private http = inject(HttpClient);
   private state = inject(StockEquityResearchStateService);
+
+  private readonly baseUrl = environment.apiBaseUrl;
 
   generateReport(request: StockRequest) {
     console.log(request, 'REQUEST');
@@ -31,7 +34,7 @@ export class StockResearchService {
     // }, 5000); // 2-second fake delay to see loading skeleton
 
     return this.http
-      .post<StockReport>('http://localhost:8000/research-equity', request)
+      .post<StockReport>(`${this.baseUrl}/research-equity`, request)
       .pipe(
         finalize(() => {
           // If request changed mid-flight, ignore stale response
