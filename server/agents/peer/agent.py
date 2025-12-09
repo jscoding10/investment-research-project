@@ -24,7 +24,7 @@ def get_peer_sentiment(ticker: str, business: str) -> str:
         cutoff_date=cutoff_date,
     )
 
-    model = LLM_MODELS["groq-llama"] 
+    model = "openai/gpt-oss-20b" 
 
     llm = ChatGroq(model=model, temperature=0.0)
 

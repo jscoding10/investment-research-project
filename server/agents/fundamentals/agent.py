@@ -18,7 +18,7 @@ def get_fundamental_sentiment(ticker: str) -> str:
     tools = [get_fundamentals_tool]
 
 
-    model_name = LLM_MODELS["groq-llama"]  # → "llama-3.3-70b-versatile"
+    model_name = "openai/gpt-oss-20b"  # → "llama-3.3-70b-versatile"
 
     llm = ChatGroq(
         model=model_name,
