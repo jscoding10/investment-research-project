@@ -33,6 +33,7 @@ research_aggregation_prompt = """
     - Technical: [key takeaways]
     - Macro: [key takeaways]
     - Industry: [key takeaways]
+    - Peer: [key takeaways]
     - News: [key takeaways]
 
     Consensus and Divergence:
@@ -41,7 +42,8 @@ research_aggregation_prompt = """
 
     Weighting of Perspectives:
     - Fundamental [percentage and explanation]
-    - Industry [percentage and explanation] 
+    - Industry [percentage and explanation]
+    - Peer [percentage and explanation] 
     - News [percentage and explanation] 
     - Macro [percentage and explanation]
     - Technical [percentage and explanation]

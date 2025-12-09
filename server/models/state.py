@@ -17,7 +17,7 @@ class EquityResearchState(BaseModel):
     """State model for the equity research workflow."""
 
     ticker: str
-    trade_duration: TradeDuration
+    trade_duration: TradeDuration     
     trade_direction: TradeDirection
     industry: Optional[str] = None
     business: Optional[str] = None
@@ -25,6 +25,7 @@ class EquityResearchState(BaseModel):
     technical_sentiment: Optional[str] = None
     macro_sentiment: Optional[str] = None
     industry_sentiment: Optional[str] = None
+    peer_sentiment: Optional[str] = None
     news_sentiment: Optional[str] = None
     combined_sentiment: Optional[str] = None
     compliant: bool = False
