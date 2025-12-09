@@ -1,5 +1,4 @@
 import os
-
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -9,14 +8,19 @@ os.environ["GLOG_minloglevel"] = "2"
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi import Request
+from fastapi.responses import FileResponse
+from fastapi.exceptions import HTTPException
+from pathlib import Path
+
 from graph import research_chain
 from models.api import EquityResearchRequest
 import yfinance as yf
-from fastapi import APIRouter
 from datetime import datetime
-import asyncio
 
 app = FastAPI()
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -26,14 +30,19 @@ app.add_middleware(
     expose_headers=["Content-Type"],
 )
 
-@app.get("/")
+# api routes all prefixed with api
+###################################### Render #######################################
+api = FastAPI()
+######################################################################################
+@api.get("/")
 def ping():
     return {"message": "Server Running"}
 
 # curl -X GET http://localhost:8000/research-equity -H "Content-Type: application/json" -d "{\"ticker\": \"NVDA\"}" | python -m json.tool
 # curl -X POST http://localhost:8000/research-equity -H "Content-Type: application/json" -d '{"ticker":"NVDA","trade_duration":"swing_trade","trade_direction":"long"}'
 
-@app.post("/research-equity")
+# Stock equity research endpoint - used to be app
+@api.post("/research-equity")
 async def research_equity(req: EquityResearchRequest):    
     res = research_chain.invoke(
         {
@@ -55,12 +64,10 @@ async def research_equity(req: EquityResearchRequest):
         "combined_sentiment": res.combined_sentiment,
     }
 
-router = APIRouter()
-
-# Your tickers
+# Stock table endpoint
 MAG7_AND_ETFS = ["AAPL", "MSFT", "GOOGL", "AMZN", "NVDA", "META", "TSLA"]
 
-@app.get("/stock-table-prices")
+@api.get("/stock-table-prices")
 async def get_portfolio_prices():
     """
     Blazing fast: ~500ms instead of 5s
@@ -115,7 +122,39 @@ async def get_portfolio_prices():
         "updated": datetime.utcnow().isoformat() + "Z",
         "source": "yfinance (bulk + fast_info)"
     }
+######################################################### Render ###################################################################
+# Mount the /api router
+app.mount("/api", api)
 
+static_dir = Path(__file__).parent / "static"
+
+if static_dir.exists() and list(static_dir.iterdir()):
+    print(f"Production mode - serving Angular from {static_dir}")
+
+    # Serve all static files directly (no html=True)
+    app.mount("/static", StaticFiles(directory=static_dir), name="static")
+
+    # Serve root files (JS/CSS) and fallback to index.html for SPA routes
+    @app.get("/{full_path:path}")
+    async def serve_angular(full_path: str):
+        file_path = static_dir / full_path
+        if file_path.is_file():
+            return FileResponse(file_path)
+        # Fallback to index.html for any unknown path (SPA routing)
+        index_path = static_dir / "index.html"
+        if index_path.is_file():
+            return FileResponse(index_path)
+        raise HTTPException(status_code=404, detail="Not Found")
+else:
+    print("Development mode - static/ not found. Use 'ng serve' for frontend.")
+    @app.get("/")
+    async def dev_message():
+        return {
+            "message": "Backend running. Start Angular with 'npm start' in /client folder",
+            "api_docs": "/docs",
+            "frontend_hint": "http://localhost:4200"
+        }
+##########################################################################################################################################
 if __name__ == "__main__":
     import uvicorn
 
