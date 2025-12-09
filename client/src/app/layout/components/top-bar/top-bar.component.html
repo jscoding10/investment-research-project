@@ -7,26 +7,19 @@
   </ng-template>
 </p-toolbar> -->
 
-<div
-  class="bg-lime-400 border-b border-gray-200 shadow-sm px-2 py-4 sticky top-0 z-40"
->
+<div class="sticky top-0 z-40 border-b border-gray-200 bg-lime-400 px-2 py-4 shadow-sm">
   <div class="flex items-center justify-between">
     <div class="flex items-center gap-3">
       <i class="pi pi-prime text-3xl text-lime-600"></i>
-      <span class="text-3xl font-bold text-gray-900"
-        >Investment Application</span
-      >
+      <span class="text-3xl font-bold text-gray-900">Conviction Insight</span>
     </div>
 
     <!-- Hamburger - Mobile only -->
     <button
       (click)="toggleMobileMenu.emit()"
-      class="p-2 rounded-lg hover:bg-gray-200 lg:hidden"
-      aria-label="Open menu"
-    >
-      <span class="material-symbols-outlined text-2xl text-gray-700">
-        menu
-      </span>
+      class="rounded-lg p-2 hover:bg-gray-200 lg:hidden"
+      aria-label="Open menu">
+      <span class="material-symbols-outlined text-2xl text-gray-700"> menu </span>
     </button>
   </div>
 </div>
