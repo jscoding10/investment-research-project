@@ -1,0 +1,11 @@
+@if (!isLoading() && !report() && !error()) {
+  <!-- <div> -->
+  <!-- <div [class.hidden]="!isLoading() && !report()"> -->
+  <app-stock-equity-research-form></app-stock-equity-research-form>
+  <!-- </div> -->
+} @else {
+  <!-- <div [class.hidden]="!report()"> -->
+  <app-stock-equity-research-report></app-stock-equity-research-report>
+  <!-- </div> -->
+  <!-- </div> -->
+}
