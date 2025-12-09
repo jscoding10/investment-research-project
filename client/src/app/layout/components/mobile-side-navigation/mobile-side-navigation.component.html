@@ -1,0 +1,49 @@
+<!-- Backdrop -->
+@if (open()) {
+  <div
+    class="fixed inset-0 z-50 bg-black/50 transition-opacity duration-200 lg:hidden"
+    (click)="open.set(false)"></div>
+}
+
+<!-- Sliding Drawer -->
+<div
+  class="fixed inset-y-0 left-0 z-50 w-72 transform rounded-r-2xl bg-gray-200 shadow-2xl transition-transform duration-300 ease-in-out lg:hidden"
+  [class.translate-x-0]="open()"
+  [class.-translate-x-full]="!open()">
+  <div class="flex h-full flex-col">
+    <div class="border-b border-gray-200 p-6">
+      <div
+        class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-lime-500 to-emerald-600 shadow-lg">
+        <span class="material-symbols-outlined text-3xl font-bold text-white">CI</span>
+      </div>
+    </div>
+
+    <nav class="flex-1 space-y-2 overflow-y-auto px-4 py-6">
+      @for (item of navItems(); track item.route) {
+        <a
+          [routerLink]="item.route"
+          routerLinkActive
+          #rla="routerLinkActive"
+          (click)="open.set(false)"
+          class="flex items-center gap-4 rounded-xl px-4 py-3 transition-all hover:bg-lime-50"
+          [class.bg-lime-50]="rla.isActive"
+          [class.text-lime-600]="rla.isActive"
+          [class.text-gray-700]="!rla.isActive">
+          <span
+            class="material-symbols-outlined text-2xl"
+            [class.text-lime-600]="rla.isActive">
+            {{ item.icon }}
+          </span>
+          <span class="text-sm font-medium">{{ item.label }}</span>
+          @if (rla.isActive) {
+            <div class="ml-auto h-8 w-1.5 rounded-full bg-lime-500"></div>
+          }
+        </a>
+      }
+    </nav>
+
+    <div class="border-t border-gray-200 p-4">
+      <!-- <p class="text-xs text-gray-500 text-center">© 2025 Investment App</p> -->
+    </div>
+  </div>
+</div>
