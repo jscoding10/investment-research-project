@@ -1,0 +1,23 @@
+<div class="flex h-screen flex-col bg-gray-50">
+  <!-- Mobile Menu -->
+  <app-mobile-side-navigation [(open)]="isMobileMenuOpen" />
+  <!-- Top Bar — full width -->
+  <!-- border-b border-gray-200 -->
+  <!-- <app-top-bar class="shrink-0 bg-white shadow-sm" /> -->
+  <!-- Main Area: Full height minus top bar -->
+  <div class="flex min-h-0 flex-1 bg-lime-400">
+    <app-side-navigation class="shrink-0" />
+    <!-- Content + Footer Column -->
+    <div class="flex min-w-0 flex-1 flex-col">
+      <app-top-bar
+        (toggleMobileMenu)="toggleMobileMenu()"
+        class="shrink-0 bg-white shadow-sm" />
+      <!-- Scrollable Content -->
+      <!-- pt-6 pb-10 lg:pt-10 lg:pb-14 -->
+      <main class="flex-1 overflow-y-auto bg-gray-200">
+        <router-outlet />
+      </main>
+      <app-footer class="shrink-0 border-t border-gray-200 bg-lime-400" />
+    </div>
+  </div>
+</div>

@@ -1,0 +1,280 @@
+<!-- Hero Section -->
+
+<section class="relative overflow-hidden bg-gray-950 px-6 py-20 text-white">
+  <div class="mx-auto max-w-4xl text-center">
+    <h1 class="text-5xl font-black leading-none tracking-tight md:text-6xl">
+      Get AI-Powered Insights to Buy or Sell <br />
+      <span class="text-lime-400">Before the Crowd Catches On.</span>
+    </h1>
+
+    <p class="mt-8 text-xl opacity-90 md:text-2xl">
+      One prompt → full AI research report in under 60 seconds.<br />
+      Covers stocks, crypto, or single-family investment properties.
+    </p>
+
+    <!-- <div
+      class="mt-10 flex flex-col sm:flex-row gap-4 justify-center items-center"
+    >
+      <div class="w-full sm:w-64">
+        <label class="block text-sm opacity-80 mb-2 sm:hidden"
+          >Asset type</label
+        >
+        <select
+          class="w-full px-6 py-4 rounded-xl bg-white/10 backdrop-blur border border-white/20 text-white text-lg appearance-none cursor-pointer focus:outline-none focus:border-white/40 transition-all"
+        >
+          <option value="" disabled selected hidden>Select asset type</option>
+          <option value="stock">Stocks</option>
+          <option value="crypto">Crypto</option>
+          <option value="home">Single-Family Home</option>
+        </select>
+      </div>
+      <input
+        type="text"
+        placeholder="e.g. NVDA, BTC, 123 Oak St, Austin TX"
+        class="w-full sm:w-96 px-6 py-4 rounded-xl bg-white/10 backdrop-blur border border-white/20 text-white placeholder-gray-400 text-lg"
+      />
+      <button
+        class="bg-lime-400 text-black font-bold px-10 py-4 rounded-xl text-lg hover:bg-lime-300 transition"
+      >
+        Generate Report Now →
+      </button>
+    </div> -->
+    <form
+      [formGroup]="homepageForm"
+      (ngSubmit)="onSubmit()">
+      <div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+        <!-- Asset Type Selector -->
+        <div class="w-full sm:w-64">
+          <!-- <label class="block text-sm opacity-80 mb-2 sm:hidden">
+          Asset type
+        </label>
+        <select
+          class="w-full px-6 py-4 rounded-xl bg-white/10 backdrop-blur border border-white/20 text-white text-lg appearance-none cursor-pointer focus:outline-none focus:border-white/40 transition-all focus:bg-black"
+          style="
+            background-image: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' fill=\'none\' viewBox=\'0%200%2020%2020\'%3E%3Cpath stroke=\'%23ffffff\' stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'1.5\' d=\'m%206%208%204%204%204%20-4\'/%3E%3C/svg%3E');
+            background-position: right 1.5rem center;
+            background-repeat: no-repeat;
+            background-size: 12px;
+          "
+        >
+          <option value="" disabled selected hidden>Select asset type</option>
+          <option value="stock">Stocks</option>
+          <option value="crypto">Crypto</option>
+          <option value="home">Single-Family Home</option>
+        </select> -->
+
+          <!-- PrimeNg Select: -->
+          <!-- <label
+            for="investmentType"
+            class="block text-sm opacity-80 mb-2 sm:hidden"
+          >
+            Asset type
+          </label> -->
+          <div class="card flex justify-center">
+            <p-select
+              formControlName="investmentType"
+              [options]="investmentTypes"
+              optionLabel="name"
+              optionValue="code"
+              placeholder="Investment Type"
+              class="w-full text-left md:w-56"
+              [invalid]="isFieldInvalid('investmentType')"
+              aria-required="true">
+            </p-select>
+          </div>
+          <!-- Error message (Tailwind-styled) -->
+          <!-- @if (homepageForm.get('investmentType')?.invalid &&
+          (homepageForm.get('investmentType')?.touched || formSubmitted)) {
+          <small class="text-red-400 text-sm mt-1">
+            @if (homepageForm.get('investmentType')?.errors?.['required']) {
+            Asset type is required. }
+          </small>
+          } -->
+          <!-- @if (isInvalid('investmentType')) {
+          <p-message
+            severity="error"
+            size="small"
+            variant="simple"
+            class="flex justify-center"
+            >City is required.</p-message
+          >
+          } -->
+        </div>
+
+        <!-- Input Field -->
+        <!-- <input
+          type="text"
+          class="w-full sm:w-96 shrink-0"
+          pInputText
+          placeholder="e.g. NVDA, BTC, 123 Oak St, Austin TX"
+          formControlName="investmentDescription"
+          [invalid]="isFieldInvalid('investmentDescription')"
+        /> -->
+
+        <!-- <input
+          type="text"
+          placeholder="e.g. NVDA, BTC, 123 Oak St, Austin TX"
+          class="w-full sm:w-96 px-6 py-4 rounded-xl bg-white/10 backdrop-blur border border-white/20 text-white placeholder-gray-400 text-lg focus:outline-none focus:border-white/40 transition-all"
+        /> -->
+
+        <!-- CTA Button -->
+        <button
+          type="submit"
+          class="whitespace-nowrap rounded-xl bg-lime-400 px-10 py-4 text-lg font-bold text-black transition hover:bg-lime-300">
+          Research Now
+        </button>
+      </div>
+    </form>
+    <p class="mt-8 text-sm opacity-70">Full report in under a minute*</p>
+  </div>
+</section>
+
+<section class="bg-gray-50 py-20">
+  <div class="mx-auto max-w-6xl px-6">
+    <h2 class="mb-16 text-center text-4xl font-black">Ditch the 46 Open Tabs. Unlock Clear Signals in One Place.</h2>
+
+    <div class="grid gap-10 md:grid-cols-3">
+      <div class="text-center">
+        <div class="mb-4 text-6xl">📈</div>
+        <h3 class="mb-3 text-2xl font-bold">Stocks & Crypto</h3>
+        <p class="text-gray-600">
+          Enter ticker + duration + long/short.<br />
+          Get a full equity research report with market outlook (bearish/bullish/neutral) and step-by-step reasoning.
+        </p>
+      </div>
+
+      <div class="text-center">
+        <div class="mb-4 text-6xl">🏠</div>
+        <h3 class="mb-3 text-2xl font-bold">Single-Family Properties</h3>
+        <p class="text-gray-600">
+          Drop any address you are considering purchasing as an investment property.<br />
+          Instantly see a data-backed purchase or pass recommendation with detailed reasoning.
+        </p>
+      </div>
+
+      <div class="text-center">
+        <div class="mb-4 text-6xl">⚡</div>
+        <h3 class="mb-3 text-2xl font-bold">Under 60 Seconds</h3>
+        <p class="text-gray-600">
+          Powered by AI agents that scour news, FRED, Yahoo Finance, and Redfin - and reason like a pro analyst for
+          unbiased recommendations.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- Add a fourth card or subsection for "Why Us?": "Backed by LangChain for accurate, multi-source analysis—far beyond basic chatbots." -->
+
+<section class="py-20">
+  <div class="mx-auto max-w-6xl px-6 text-center">
+    <h2 class="mb-8 text-4xl font-black">
+      Stay ahead with real-time updates on stocks, crypto prices, and market sentiment - pulled from trusted sources.
+    </h2>
+    <app-market-data></app-market-data>
+  </div>
+</section>
+
+<!-- <section
+  class="relative bg-gradient-to-r from-lime-300 to-slate-400 py-16 px-6 text-white"
+>
+  <div
+    class="absolute inset-0 -z-10 bg-cover bg-center"
+    style="background-image: url('/path/to/your-image.jpg')"
+  ></div>
+
+  <div class="max-w-7xl mx-auto text-center space-y-8">
+    <h1 class="text-4xl sm:text-5xl font-semibold leading-tight tracking-tight">
+      Smart, AI-Driven Insights for Confident Investment Decisions
+    </h1>
+
+    <p class="text-lg sm:text-xl md:text-2xl font-light">
+      Get actionable sentiment analysis for stocks, crypto, and real estate with
+      Conviction Insight. Make informed decisions in minutes.
+    </p>
+
+    <div class="mt-8">
+      <a
+        href="#get-started"
+        class="inline-block bg-green-600 text-white text-lg font-semibold py-3 px-8 rounded-full shadow-md hover:bg-green-700 transition-all duration-300"
+      >
+        Start Today
+      </a>
+    </div>
+
+    <p class="text-sm sm:text-base font-light mt-6 max-w-3xl mx-auto">
+      Conviction Insight uses advanced AI to provide personalized, data-backed
+      articles on the market sentiment for any asset. Whether you're trading
+      stocks, exploring crypto, or analyzing real estate, simply input the asset
+      ticker and trade parameters or address, and receive instant, actionable
+      insights that help you make confident investment choices. Let AI-powered
+      analysis guide your strategy and give you the conviction you need to
+      succeed.
+    </p>
+  </div>
+</section> -->
+
+<!-- <section class="py-16">
+  <div class="max-w-7xl mx-auto px-6">
+    <h2 class="text-3xl font-semibold text-center text-gray-800">
+      How Conviction Insight Works
+    </h2>
+    <div class="mt-8 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+  
+      <p-card
+        class="shadow-lg hover:shadow-2xl transition-all duration-200 ease-in-out"
+      >
+        <ng-template pTemplate="header">
+          <h3 class="text-xl font-semibold text-gray-800">
+            Get Instant Sentiment Analysis
+          </h3>
+        </ng-template>
+        <ng-template pTemplate="content">
+          <p class="text-gray-600 mt-2">
+            Enter a stock, crypto, or real estate asset ticker, and get a
+            real-time sentiment report powered by AI.
+          </p>
+        </ng-template>
+      </p-card>
+
+      <p-card
+        class="shadow-lg hover:shadow-2xl transition-all duration-200 ease-in-out"
+      >
+        <ng-template pTemplate="header">
+          <h3 class="text-xl font-semibold text-gray-800">
+            Tailored to Your Trade Strategy
+          </h3>
+        </ng-template>
+        <ng-template pTemplate="content">
+          <p class="text-gray-600 mt-2">
+            Choose your trade duration and position (long or short), and get
+            insights that match your specific strategy.
+          </p>
+        </ng-template>
+      </p-card>
+
+      <p-card
+        class="shadow-lg hover:shadow-2xl transition-all duration-200 ease-in-out"
+      >
+        <ng-template pTemplate="header">
+          <h3 class="text-xl font-semibold text-gray-800">
+            Confidence in Every Decision
+          </h3>
+        </ng-template>
+        <ng-template pTemplate="content">
+          <p class="text-gray-600 mt-2">
+            Our AI agents provide you with data-backed, confidence-boosting
+            insights so you can trade and invest smarter.
+          </p>
+        </ng-template>
+      </p-card>
+    </div>
+  </div>
+</section>
+<section>
+  <h1
+    class="text-3xl font-semibold text-center text-gray-800 flex justify-center"
+  >
+    Utilizes Real-Time Market Data
+  </h1>
+  <app-market-data></app-market-data>
+</section> -->

@@ -1,0 +1,241 @@
+<!-- stock-report.component.html -->
+<!-- <div class="min-h-full bg-black">
+  @if (isLoading) {
+  <div
+    class="bg-white/5 backdrop-blur-lg border border-white/10 rounded-2xl p-10"
+  >
+    <div class="animate-pulse space-y-8">
+      <div class="flex items-center justify-between">
+        <div class="h-12 bg-white/10 rounded-2xl w-48"></div>
+        <div
+          class="h-16 w-16 rounded-full bg-lime-400/20 flex items-center justify-center"
+        >
+          <div class="h-10 w-10 rounded-full bg-lime-400 animate-ping"></div>
+        </div>
+      </div>
+      <div class="space-y-4">
+        <div class="h-8 bg-white/10 rounded-xl w-3/4"></div>
+        <div class="h-8 bg-white/10 rounded-xl w-full"></div>
+        <div class="h-8 bg-white/10 rounded-xl w-5/6"></div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="space-y-3">
+          <div class="h-6 bg-white/10 rounded-lg"></div>
+          <div class="h-32 bg-white/10 rounded-xl"></div>
+        </div>
+        <div class="space-y-3">
+          <div class="h-6 bg-white/10 rounded-lg"></div>
+          <div class="h-32 bg-white/10 rounded-xl"></div>
+        </div>
+        <div class="space-y-3">
+          <div class="h-6 bg-white/10 rounded-lg"></div>
+          <div class="h-32 bg-white/10 rounded-xl"></div>
+        </div>
+      </div>
+      <div class="text-center text-white/60 mt-8">
+        <p class="text-lg">Multi-agent system analyzing ...</p>
+        <p class="text-sm mt-2">
+          Technical • Fundamental • Sentiment • Risk analysis in progress
+        </p>
+      </div>
+    </div>
+  </div> -->
+<!-- } @if (report(); as report) { -->
+<!-- Actual report with Markdown -->
+<!-- } @if (!isLoading && !report()) {
+  <div class="text-center py-20 text-white/50">
+    <p class="text-2xl">Enter a ticker to generate a research report</p>
+  </div>
+  } -->
+<!-- }
+</div> -->
+
+<div class="min-h-full bg-black">
+  @if (isLoading()) {
+    <div class="animate-pulse rounded-2xl border border-white/10 p-10 backdrop-blur-lg">
+      <div class="mb-8 flex items-start justify-between">
+        <div class="h-10 w-64 rounded-2xl bg-white/10"></div>
+        <div class="flex h-20 w-20 items-center justify-center rounded-full bg-lime-400/20">
+          <div class="m-auto h-12 w-12 animate-ping rounded-full bg-lime-400"></div>
+        </div>
+      </div>
+      <div class="space-y-6">
+        <div class="h-6 w-full rounded-lg bg-white/10"></div>
+        <div class="h-6 w-5/6 rounded-lg bg-white/10"></div>
+        <div class="mt-12 grid grid-cols-1 gap-8 md:grid-cols-2">
+          <div class="space-y-4">
+            <div class="h-32 rounded-xl bg-white/10"></div>
+          </div>
+          <div class="space-y-4">
+            <div class="h-32 rounded-xl bg-white/10"></div>
+          </div>
+        </div>
+      </div>
+      <p class="mt-10 text-center text-white/70">Preparing Equity Research Report...</p>
+    </div>
+  }
+  <!-- Actual Report -->
+  <!-- @if (report(); as data) {
+  <div class="space-y-12 animate-fade-in">
+    <div class="text-center">
+      <span
+        class="inline-block px-10 py-5 rounded-full text-3xl font-black tracking-wider
+          {{
+          getOverallReport(data) === 'BULLISH'
+            ? 'bg-lime-400/20 text-lime-400 border-2 border-lime-400'
+            : getOverallReport(data) === 'BEARISH'
+            ? 'bg-red-500/20 text-red-400 border-2 border-red-500'
+            : 'bg-yellow-500/20 text-yellow-400 border-2 border-yellow-500'
+        }}"
+      >
+        {{ getOverallReport(data) }}
+      </span>
+    </div>
+    <div class="grid md:grid-cols-2 gap-8">
+      <div
+        class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-8 text-white"
+      >
+        <h2 class="text-2xl font-bold text-lime-400 mb-6">
+          Fundamental Analysis
+        </h2>
+        <app-simple-markdown [markdown]="data.sentiment_analysis.fundamental" />
+      </div>
+      <div
+        class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-8 text-white"
+      >
+        <h2 class="text-2xl font-bold text-lime-400 mb-6">
+          Technical Analysis
+        </h2>
+        <app-simple-markdown [markdown]="data.sentiment_analysis.technical" />
+      </div>
+      <div
+        class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-8 text-white"
+      >
+        <h2 class="text-2xl font-bold text-lime-400 mb-6">News</h2>
+        <app-simple-markdown [markdown]="data.sentiment_analysis.news" />
+      </div>
+      <div
+        class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-8 text-white"
+      >
+        <h2 class="text-2xl font-bold text-lime-400 mb-6">Industry</h2>
+        <app-simple-markdown [markdown]="data.sentiment_analysis.industry" />
+      </div>
+      <div
+        class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-8 text-white"
+      >
+        <h2 class="text-2xl font-bold text-lime-400 mb-6">Macro Factors</h2>
+        <app-simple-markdown [markdown]="data.sentiment_analysis.macro" />
+      </div>
+      <div
+        class="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-8 md:col-span-2 text-white"
+      >
+        <h2 class="text-2xl font-bold text-lime-400 mb-6">
+          Combined Sentiment
+        </h2>
+        <app-simple-markdown [markdown]="data.combined_sentiment" />
+      </div>
+    </div>
+  </div>
+  } -->
+
+  <div class="min-h-screen bg-black px-4 py-8 text-white">
+    <!-- 1. Hero Verdict - Always at the top -->
+    @if (report(); as data) {
+      <div class="animate-fade-in mx-auto mb-12 max-w-4xl text-center">
+        <div class="mb-6 inline-flex items-center gap-4">
+          <h1 class="text-5xl font-black">{{ ticker().toUpperCase() }}</h1>
+          <span
+            class="inline-block rounded-full px-6 py-5 text-xl font-black tracking-wider
+                 {{
+              getOverallSentiment(data) === 'BULLISH'
+                ? 'border-2 border-lime-400 bg-lime-400/20 text-lime-400'
+                : getOverallSentiment(data) === 'BEARISH'
+                  ? 'border-2 border-red-500 bg-red-500/20 text-red-400'
+                  : 'border-2 border-yellow-500 bg-yellow-500/20 text-yellow-400'
+            }}">
+            {{ getOverallSentiment(data) }}
+          </span>
+        </div>
+        <p class="text-xl opacity-70">AI-Powered Equity Research Report</p>
+      </div>
+
+      <!-- 2. Combined Sentiment (the big conclusion) -->
+      <div class="mx-auto mb-12 max-w-5xl">
+        <div
+          class="rounded-2xl border border-lime-500/30 bg-gradient-to-br from-lime-900/20 to-transparent p-8 backdrop-blur">
+          <h2 class="mb-6 text-3xl font-bold text-lime-400">Overall Conclusion</h2>
+          <app-simple-markdown
+            [markdown]="data.combined_sentiment"
+            class="prose prose-invert prose-lg max-w-none" />
+        </div>
+      </div>
+
+      <!-- 3. Supporting Analysis Grid -->
+      <div class="mx-auto max-w-7xl">
+        <div class="grid gap-6 lg:grid-cols-3">
+          <!-- Fundamental -->
+          <div class="rounded-2xl border border-white/10 bg-white/5 p-6 transition hover:border-lime-500/50">
+            <h3 class="mb-4 text-xl font-bold text-lime-400">Fundamental</h3>
+            <app-simple-markdown
+              [markdown]="data.sentiment_analysis.fundamental"
+              class="prose prose-invert prose-sm break-words" />
+          </div>
+
+          <!-- Technical -->
+          <div class="rounded-2xl border border-white/10 bg-white/5 p-6 transition hover:border-lime-500/50">
+            <h3 class="mb-4 text-xl font-bold text-lime-400">Technical</h3>
+            <app-simple-markdown
+              [markdown]="data.sentiment_analysis.technical"
+              class="prose prose-invert prose-sm break-words" />
+          </div>
+
+          <!-- Peer Comparison - NEW -->
+          <div class="rounded-2xl border border-white/10 bg-white/5 p-6 transition hover:border-lime-500/50">
+            <h3 class="mb-4 text-xl font-bold text-lime-400">Peer Comparison</h3>
+            <app-simple-markdown
+              [markdown]="data.sentiment_analysis.peer"
+              class="prose prose-invert prose-sm break-words" />
+          </div>
+
+          <!-- Industry -->
+          <div class="rounded-2xl border border-white/10 bg-white/5 p-6 transition hover:border-lime-500/50">
+            <h3 class="mb-4 text-xl font-bold text-lime-400">Industry</h3>
+            <app-simple-markdown
+              [markdown]="data.sentiment_analysis.industry"
+              class="prose prose-invert prose-sm break-words" />
+          </div>
+
+          <!-- News & Sentiment -->
+          <div class="rounded-2xl border border-white/10 bg-white/5 p-6 transition hover:border-lime-500/50">
+            <h3 class="mb-4 text-xl font-bold text-lime-400">News & Sentiment</h3>
+            <app-simple-markdown
+              [markdown]="data.sentiment_analysis.news"
+              class="prose prose-invert prose-sm break-words" />
+          </div>
+
+          <!-- Macro Factors -->
+          <div class="rounded-2xl border border-white/10 bg-white/5 p-6 transition hover:border-lime-500/50">
+            <h3 class="mb-4 text-xl font-bold text-lime-400">Macro Factors</h3>
+            <app-simple-markdown
+              [markdown]="data.sentiment_analysis.macro"
+              class="prose prose-invert prose-sm break-words" />
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Empty State -->
+    @if (!isLoading() && !report() && !error()) {
+      <div class="py-32 text-center text-white/40">
+        <p class="text-2xl">Enter a ticker above to generate an AI-powered research report</p>
+      </div>
+    }
+
+    <!-- Error State -->
+    @if (error()) {
+      <div class="mx-auto max-w-2xl rounded-xl border border-red-500 bg-red-900/50 p-6 text-red-300">
+        {{ error() }}
+      </div>
+    }
+  </div>
+</div>
