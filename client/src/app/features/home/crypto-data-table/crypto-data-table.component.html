@@ -1,0 +1,49 @@
+<p-table [value]="cryptos">
+  <!-- Header -->
+  <ng-template #header>
+    <tr class="border-b border-gray-200 text-left text-sm text-gray-600">
+      <th class="px-6 pb-4">Ticker</th>
+      <th class="px-6 pb-4">Name</th>
+      <th class="px-6 pb-4 text-right">Price</th>
+      <th class="px-6 pb-4 text-right">Change</th>
+      <th class="px-6 pb-4 text-right">Volume</th>
+    </tr>
+  </ng-template>
+
+  <!-- Body -->
+  <ng-template
+    #body
+    let-stock>
+    <tr class="border-b border-gray-100 last:border-b-0">
+      <td class="px-6 py-5">
+        <span class="font-mono text-lg">{{ stock.ticker }}</span>
+        <!-- <p-skeleton /> -->
+      </td>
+      <td class="px-6 py-5 text-gray-800">{{ stock.name }}</td>
+      <td class="px-6 py-5 text-right text-gray-900">
+        {{ stock.price | currency: stock.currency : 'symbol' : '1.2-2' }}
+      </td>
+      <td class="px-6 py-5 text-right">
+        <p-tag
+          [value]="(stock.change_pct | number: '1.2-2') + '%'"
+          [severity]="stock.change_pct >= 0 ? 'success' : 'danger'"
+          rounded
+          class="px-3 py-1.5 text-xs" />
+      </td>
+      <td class="px-6 py-5 text-right text-gray-600">
+        {{ stock.volume }}
+      </td>
+    </tr>
+  </ng-template>
+
+  <!-- Empty state -->
+  <ng-template pTemplate="emptymessage">
+    <tr>
+      <td
+        colspan="5"
+        class="py-16 text-center text-lg text-gray-500">
+        No data available at the moment
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
