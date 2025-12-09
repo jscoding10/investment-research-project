@@ -1,5 +1,5 @@
 import dotenv
-from langchain_openai import ChatOpenAI
+from langchain_groq import ChatGroq
 
 from agents.evaluation.prompt import sentiment_evaluator_prompt
 from agents.shared.llm_models import LLM_MODELS
@@ -16,8 +16,8 @@ def evaluate_aggregated_sentement(sentiment: str):
         f"Use these criteria as the evaluation target: {sentiment_evaluator_prompt}"
     )
 
-    model = LLM_MODELS["open_ai_smart"]
-    llm = ChatOpenAI(model=model, temperature=0.0).with_structured_output(
+    model = LLM_MODELS["groq-llama"]
+    llm = ChatGroq(model=model, temperature=0.0).with_structured_output(
         schema=AggregatorFeedback
     )
     result = llm.invoke(prompt)
