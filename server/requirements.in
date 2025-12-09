@@ -12,7 +12,11 @@ langgraph
 # Data / finance
 pandas_datareader
 yfinance
-numpy                      
+numpy
+fredapi
+
+# News
+tavily
 
 # Validation & types
 pydantic
