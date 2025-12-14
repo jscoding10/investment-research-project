@@ -1,37 +1,45 @@
 import dotenv
 from datetime import datetime, timedelta
-from langchain_groq import ChatGroq
+from logger import get_logger
 
-from agents.shared.agent_utils import run_agent_with_tools  
+from langchain_groq import ChatGroq
+from langchain_core.messages import HumanMessage
+
 from agents.shared.llm_models import LLM_MODELS
 from agents.peer.prompt import peer_research_prompt
-from agents.peer.tools import search_peer_tool
+
+logger = get_logger(__name__)
 
 dotenv.load_dotenv()
 
 def get_peer_sentiment(ticker: str, business: str) -> str:
     """
-    Get peer-relative sentiment using only ticker (30-day window).
-    Matches industry agent structure exactly.
+    Retrieves structured peer-relative sentiment (POSITIVE/NEUTRAL/NEGATIVE) for the given ticker
+    using live web search grounded in the most recent 20 days of data.
     """
-    current_date = datetime.now().strftime("%Y-%m-%d")
-    cutoff_date = (datetime.now() - timedelta(days=30)).strftime("%Y-%m-%d")
+    try:
+        current_date = datetime.now().strftime("%Y-%m-%d")
+        cutoff_date = (datetime.now() - timedelta(days=20)).strftime("%Y-%m-%d")
 
-    prompt = peer_research_prompt.format(
-        ticker=ticker,
-        business=business,
-        current_date=current_date,
-        cutoff_date=cutoff_date,
-    )
+        prompt = peer_research_prompt.format(
+            ticker=ticker,
+            business=business,
+            current_date=current_date,
+            cutoff_date=cutoff_date,
+        )
 
-    model = "openai/gpt-oss-20b" 
+        model = LLM_MODELS['groq-compound-mini']
 
-    llm = ChatGroq(model=model, temperature=0.0)
+        llm = ChatGroq(
+            model=model,
+            temperature=0.0,
+            max_tokens=600,                  
+        )
 
-    tools = [search_peer_tool]
-    result = run_agent_with_tools(llm=llm, prompt=prompt, tools=tools)
+        result = llm.invoke([HumanMessage(content=prompt)])
 
-    if not result or result.strip() == "" or "error" in result.lower():
-        return "[NEUTRAL]\nLimited peer comparison data in last 30 days — stock likely tracking peers.\nConfidence: Low"
+        return result.content.strip()
 
-    return result
+    except Exception as e:
+        logger.error(f"Error in get_peer_sentiment: {e}", exc_info=True)
+        return f"Error executing agent: {str(e)}"
