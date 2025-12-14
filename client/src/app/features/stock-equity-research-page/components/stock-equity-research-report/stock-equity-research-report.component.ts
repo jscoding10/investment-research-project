@@ -1,4 +1,4 @@
-import { Component, effect, inject, Input, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SimpleMarkdownComponent } from '../simple-markdown/simple-markdown.component';
 import { StocksState } from '../../state/stock-state';
@@ -14,7 +14,6 @@ import { StockEquityResearchStateService } from '../../services/stock-equity-res
 export class StockEquityResearchReportComponent {
   private state = inject(StockEquityResearchStateService);
 
-  // report = this.state.report;
   report = this.state.report; // read-only signal
   isLoading = this.state.isLoading; // read-only signal
   ticker = this.state.ticker;

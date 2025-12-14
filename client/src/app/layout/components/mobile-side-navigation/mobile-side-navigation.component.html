@@ -1,11 +1,8 @@
-<!-- Backdrop -->
 @if (open()) {
   <div
     class="fixed inset-0 z-50 bg-black/50 transition-opacity duration-200 lg:hidden"
     (click)="open.set(false)"></div>
 }
-
-<!-- Sliding Drawer -->
 <div
   class="fixed inset-y-0 left-0 z-50 w-72 transform rounded-r-2xl bg-gray-200 shadow-2xl transition-transform duration-300 ease-in-out lg:hidden"
   [class.translate-x-0]="open()"
@@ -17,7 +14,6 @@
         <span class="material-symbols-outlined text-3xl font-bold text-white">CI</span>
       </div>
     </div>
-
     <nav class="flex-1 space-y-2 overflow-y-auto px-4 py-6">
       @for (item of navItems(); track item.route) {
         <a
@@ -41,9 +37,6 @@
         </a>
       }
     </nav>
-
-    <div class="border-t border-gray-200 p-4">
-      <!-- <p class="text-xs text-gray-500 text-center">© 2025 Investment App</p> -->
-    </div>
+    <div class="border-t border-gray-200 p-4"></div>
   </div>
 </div>
