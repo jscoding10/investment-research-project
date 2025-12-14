@@ -1,5 +1,6 @@
 # Core framework
 fastapi
+slowapi
 uvicorn[standard]
 
 # LangChain ecosystem 

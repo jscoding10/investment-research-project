@@ -6,13 +6,15 @@ load_dotenv()
 os.environ["GRPC_VERBOSITY"] = "ERROR"
 os.environ["GLOG_minloglevel"] = "2"
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi import Request
 from fastapi.responses import FileResponse
 from fastapi.exceptions import HTTPException
 from pathlib import Path
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
 
 from graph import research_chain
 from models.api import EquityResearchRequest
@@ -38,12 +40,17 @@ api = FastAPI()
 def ping():
     return {"message": "Server Running"}
 
+limiter = Limiter(key_func=get_remote_address)
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
 # curl -X GET http://localhost:8000/research-equity -H "Content-Type: application/json" -d "{\"ticker\": \"NVDA\"}" | python -m json.tool
 # curl -X POST http://localhost:8000/research-equity -H "Content-Type: application/json" -d '{"ticker":"NVDA","trade_duration":"swing_trade","trade_direction":"long"}'
 
 # Stock equity research endpoint - used to be app
 @api.post("/research-equity")
-async def research_equity(req: EquityResearchRequest):    
+@limiter.limit("10/minute")
+async def research_equity(request: Request, req: EquityResearchRequest):    
     res = research_chain.invoke(
         {
             "ticker": req.ticker,
