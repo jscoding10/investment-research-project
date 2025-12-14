@@ -1,86 +1,46 @@
-# import dotenv
-# from datetime import datetime, timedelta
-# from langchain_groq import ChatGroq  
-
-# from agents.shared.agent_utils import run_agent_with_tools  
-# from agents.shared.llm_models import LLM_MODELS
-# from agents.industry.prompt import industry_research_prompt
-# from agents.industry.tools import search_industry_tool  
-
-# from logger import get_logger
-
-# logger = get_logger(__name__)
-
-# dotenv.load_dotenv()
-
-# def get_industry_sentiment(ticker: str, industry: str) -> str:
-#     """
-#     Get 60-day industry sentiment using Groq + Tavily search tool.
-#     Focuses on sector trends, competition, and tailwinds or headwinds from recent reports.
-#     """
-#     logger.info(f"Starting industry research for {ticker}")
-#     logger.info(f"INDUSTRY FIELD VALUE = '{industry}'")
-#     current_date = datetime.now().strftime("%Y-%m-%d")
-#     cutoff_date = (datetime.now() - timedelta(days=60)).strftime("%Y-%m-%d")
-
-#     prompt = industry_research_prompt.format(
-#         ticker=ticker,
-#         industry=industry,
-#         current_date=current_date,
-#         cutoff_date=cutoff_date,
-#     )
-    
-#     # Groq model from shared config
-#     model = LLM_MODELS["groq-llama"]  # "llama-3.3-70b-versatile"
-    
-#     llm = ChatGroq(
-#         model=model,
-#         temperature=0.0,  # Deterministic for analysis
-#     )
-    
-#     # Run with tool (Groq auto-calls Tavily)
-#     tools = [search_industry_tool]
-#     result = run_agent_with_tools(llm=llm, prompt=prompt, tools=tools)
-    
-#     return result
-
 import dotenv
 from datetime import datetime, timedelta
-from langchain_groq import ChatGroq  
+from logger import get_logger
 
-from agents.shared.agent_utils import run_agent_with_tools  
 from agents.shared.llm_models import LLM_MODELS
 from agents.industry.prompt import industry_research_prompt
-from agents.industry.tools import search_industry_tool  
+
+from langchain_core.messages import HumanMessage
+from langchain_groq import ChatGroq  
 
 dotenv.load_dotenv()
 
+logger = get_logger(__name__)
+
 def get_industry_sentiment(ticker: str, industry: str) -> str:
     """
-    Get industry sentiment using Groq + Tavily search tool.
+    Retrieves structured industry sentiment for the ticker and industry (BULLISH/BEARISH/NEUTRAL)
+    using live web search grounded in the most recent 60 days of data.
     Analyzes sector trends, competition, and tailwinds/headwinds from recent reports.
     """
+    try:
+        current_date = datetime.now().strftime("%Y-%m-%d")
+        cutoff_date = (datetime.now() - timedelta(days=60)).strftime("%Y-%m-%d")
 
-    current_date = datetime.now().strftime("%Y-%m-%d")
-    cutoff_date = (datetime.now() - timedelta(days=30)).strftime("%Y-%m-%d")
+        prompt = industry_research_prompt.format(
+            ticker=ticker,
+            industry=industry,
+            current_date=current_date,
+            cutoff_date=cutoff_date,
+        )
+        
+        model = LLM_MODELS['groq-compound-mini']
 
-    prompt = industry_research_prompt.format(
-        ticker=ticker,
-        industry=industry,
-        current_date=current_date,
-        cutoff_date=cutoff_date,
-    )
-     
-    # Groq model from shared config
-    model = LLM_MODELS["groq-llama"]  # "llama-3.3-70b-versatile"
+        llm = ChatGroq(
+            model=model,
+            temperature=0.0,
+            max_tokens=600,                   
+        )
+        
+        result = llm.invoke([HumanMessage(content=prompt)])
+        
+        return result.content.strip()
     
-    llm = ChatGroq(
-        model=model,
-        temperature=0.0,  # Deterministic for analysis
-    )
-    
-    # Run with tool (Groq auto-calls Tavily)
-    tools = [search_industry_tool]
-    result = run_agent_with_tools(llm=llm, prompt=prompt, tools=tools)
-    
-    return result
+    except Exception as e:
+        logger.error(f"Error in get_industry_sentiment: {e}", exc_info=True)
+        return f"Error executing agent: {str(e)}"
