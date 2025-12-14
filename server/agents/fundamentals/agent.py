@@ -11,6 +11,8 @@ from agents.fundamentals.tools import (
     get_earnings_and_financial_health,
 )
 
+from models.agent import FundamentalSentimentOutput
+
 dotenv.load_dotenv()
 
 
@@ -40,11 +42,12 @@ def get_fundamental_sentiment(
         prompt = f"{fundamentals_research_prompt}\n\n"
         prompt += f"Analyze the business fundamentals for ticker: {ticker}\n\n"
         prompt += f"Here is the fundamental data:\n{fundamentals_data.model_dump_json(indent=2)}"
-        result = llm.invoke(prompt)
-        return result.content
+        structured_llm = llm.with_structured_output(FundamentalSentimentOutput)
+        result = structured_llm.invoke(prompt)
+        return result
     else:
         # No cached info - use tool-calling approach
         prompt = f"{fundamentals_research_prompt}\n\nAnalyze the business fundamentals for ticker: {ticker}"
         tools = [get_fundamentals_tool]
-        result = run_agent_with_tools(llm, prompt, tools)
+        result = run_agent_with_tools(llm, prompt, tools, FundamentalSentimentOutput)
         return result

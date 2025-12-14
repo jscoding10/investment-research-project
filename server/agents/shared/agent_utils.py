@@ -1,6 +1,7 @@
-from typing import List
+from typing import Optional, Type, Union, List
 from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_core.tools import BaseTool
+from pydantic import BaseModel
 
 from logger import get_logger
 
@@ -11,6 +12,7 @@ def run_agent_with_tools(
     llm: BaseChatModel,
     prompt: str,
     tools: List[BaseTool] = [],
+    output_schema: Optional[Type[BaseModel]] = None,
 ):
     """
     Generic agent executor that handles tool calling flow.
@@ -19,9 +21,11 @@ def run_agent_with_tools(
         llm: The llm model to use for the agent
         prompt: The prompt to send to the LLM
         tools: List of tools to bind to the LLM
+        output_schema: Optional Pydantic model for structured output
+
 
     Returns:
-        The final LLM response content after executing any tool calls
+        The final LLM response (structured if output_schema provided, else content string)
     """
     try:
         # Generate lookup dictionary so can find tools by name
@@ -30,7 +34,7 @@ def run_agent_with_tools(
 
         # Tell the LLM: "You are allowed to use these tools if you need data"
         # This is like giving the AI a toolbox
-        llm_with_tools = llm.bind_tools(tools)
+        llm_with_tools = llm.bind_tools(tools) if tools else llm
 
         # Initial invocation — send the user's question
         response = llm_with_tools.invoke(prompt)
@@ -73,13 +77,20 @@ def run_agent_with_tools(
             ]
 
             # Second LLM call with tool results to get the analysis
-            final_response = llm_with_tools.invoke(messages)
-            return final_response.content
+            if output_schema:
+                structured_llm = llm.with_structured_output(output_schema)
+                final_response = structured_llm.invoke(messages)
+                return final_response
+            else:
+                final_response = llm_with_tools.invoke(messages)
+                return final_response.content
         else:
-            # No tool call, return the response
-            # The AI didn't need any tools — it just answered directly
-            # Example: the aggregation agent has all info already
-            return response.content
+            if output_schema:
+                structured_llm = llm.with_structured_output(output_schema)
+                final_response = structured_llm.invoke(prompt)
+                return final_response
+            else:
+                return response.content
     except Exception as e:
         # If anything goes wrong (bad ticker, API down, etc.)
         logger.error(f"Error in run_agent_with_tools: {e}", exc_info=True)

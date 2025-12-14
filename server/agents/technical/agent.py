@@ -6,6 +6,7 @@ from agents.shared.agent_utils import run_agent_with_tools
 from agents.shared.llm_models import LLM_MODELS
 from agents.technical.prompt import technical_research_prompt
 from agents.technical.tools import get_technical_analysis_tool
+from models.agent import TechnicalSentimentOutput
 
 dotenv.load_dotenv()
 
@@ -24,5 +25,5 @@ def get_technical_sentiment(ticker: str):
             "Make sure you have a .env file with GROQ_API_KEY=your_real_key_here"
         )
     llm = ChatGroq(model=model, temperature=0.0)
-    result = run_agent_with_tools(llm, prompt, tools)
+    result = run_agent_with_tools(llm, prompt, tools, TechnicalSentimentOutput)
     return result

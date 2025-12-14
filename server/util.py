@@ -3,6 +3,7 @@ from typing import Any, Dict, Optional
 
 from langgraph.types import CachePolicy
 import yfinance as yf
+from pydantic import BaseModel
 
 from logger import get_logger
 
@@ -208,6 +209,33 @@ def create_macro_cache_policy() -> CachePolicy:
         return f"macro:{date_bucket}".encode()
 
     return CachePolicy(key_func=key_func, ttl=TTL_VERY_LONG)
+
+def format_sentiment_output(output: BaseModel) -> str:
+    """Format a sentiment output model as readable text."""
+    lines = []
+    data = output.model_dump()
+
+    # Get the main sentiment/valuation field
+    if "sentiment" in data:
+        lines.append(f"[{data['sentiment']}]")
+    elif "valuation" in data:
+        lines.append(f"[{data['valuation']}]")
+
+    lines.append("")
+
+    # Format key points
+    for kp in data.get("key_points", []):
+        if isinstance(kp, dict):
+            # KeyPointWithCitation
+            lines.append(f"* {kp['point']} [{kp['source']}, {kp['date']}]")
+        else:
+            # Simple string key point
+            lines.append(f"* {kp}")
+
+    lines.append("")
+    lines.append(f"Confidence: {data.get('confidence', 'N/A')}")
+
+    return "\n".join(lines)
 
 def validate_ticker(ticker: str, state: EquityResearchState) -> dict:
     try:
