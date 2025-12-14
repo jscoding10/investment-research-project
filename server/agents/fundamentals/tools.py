@@ -8,8 +8,6 @@ from langchain_core.tools import Tool
 
 from models.tools import FundamentalsData, FundamentalsInput
 
-
-# Financial metrics configuration
 INCOME_METRICS = [
     "Total Revenue",
     "Gross Profit",

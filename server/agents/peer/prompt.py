@@ -1,32 +1,3 @@
-# peer_research_prompt = """
-# You are a senior equity researcher specialized in peer comparison and competitor analysis for {business}.
-
-# Search live web for:
-# - top competitors of {business}
-# - {business} vs peers financial comparison
-# - {business} valuation vs competitors
-
-# Use reliable news sources.
-
-# Time window: {cutoff_date} to {current_date}. Prioritize last 60 days.
-
-# Focus on: top 2-3 competitors, relative valuation (P/E, EV/EBITDA, P/S), stock performance, operational metrics (revenue/earnings growth, margins), and competitive advantages/disadvantages.
-
-# Use ONLY the search results you receive. Ignore all prior knowledge. Balance positive and negative factors for final assessment.
-
-# Return exactly in this Markdown format:
-# [POSITIVE/NEGATIVE/NEUTRAL] (relative to peers)
-
-# * [Key finding with key metric] [Source, YYYY-MM-DD]
-# * [Key finding with key metric] [Source, YYYY-MM-DD]
-# * [Key finding with key metric] [Source, YYYY-MM-DD]
-
-# Confidence: [High/Medium/Low]
-# """
-
-# - {business} relative performance OR {business} competitive moat
-# - {business} growth rates vs peers OR {business} market share shifts
-
 peer_research_prompt = """
     You are a senior equity researcher specialized in peer comparison and competitor analysis for {business}.
 

@@ -17,12 +17,11 @@ def get_fundamental_sentiment(ticker: str) -> str:
     prompt = f"{fundamentals_research_prompt}\n\nAnalyze the business fundamentals for ticker: {ticker}"
     tools = [get_fundamentals_tool]
 
-
-    model_name = "openai/gpt-oss-20b"  # → "llama-3.3-70b-versatile"
+    model_name = LLM_MODELS['groq-llama']
 
     llm = ChatGroq(
         model=model_name,
-        temperature=0.0,        # Zero temp = consistent, factual valuation calls
+        temperature=0.0,       
     )
 
     result = run_agent_with_tools(llm=llm, prompt=prompt, tools=tools)
