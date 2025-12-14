@@ -122,6 +122,44 @@ async def get_portfolio_prices():
         "updated": datetime.utcnow().isoformat() + "Z",
         "source": "yfinance (bulk + fast_info)"
     }
+
+@api.get("/debug/industry")
+async def debug_industry(ticker: str = "NVDA", industry: str = "Semiconductors"):
+    from agents.industry.agent import get_industry_sentiment
+    result = get_industry_sentiment(ticker=ticker, industry=industry)
+    return {"ticker": ticker,  "result": result}  
+
+@api.get("/debug/peer")
+async def debug_peer(ticker: str = "AAPL", business: str= "Apple Inc."):
+    """
+    Quick test endpoint to run ONLY the peer agent in isolation.
+    Example: http://localhost:8000/debug/peer?ticker=AAPL&business=Apple Inc.
+    """
+    from agents.peer.agent import get_peer_sentiment
+    
+    result = get_peer_sentiment(ticker=ticker, business=business)
+    
+    return {
+        "ticker": ticker,
+  
+        "result": result
+    } 
+
+@api.get("/debug/news")
+async def debug_news(ticker: str = "LLY", business: str= "Eli Lilly and Company"):
+    """
+    Quick test endpoint to run ONLY the news agent in isolation.
+    Example: http://localhost:8000/debug/news?ticker=AAPL&business=Apple Inc.
+    """
+    from agents.news.agent import get_news_sentiment
+    
+    result = get_news_sentiment(ticker=ticker, business=business)
+    
+    return {
+        "ticker": ticker,
+  
+        "result": result
+    }
 ######################################################### Render ###################################################################
 # Mount the /api router
 app.mount("/api", api)
