@@ -1,4 +1,5 @@
 import os
+import re
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -6,7 +7,7 @@ load_dotenv()
 os.environ["GRPC_VERBOSITY"] = "ERROR"
 os.environ["GLOG_minloglevel"] = "2"
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
@@ -20,6 +21,25 @@ from graph import research_chain
 from models.api import EquityResearchRequest
 import yfinance as yf
 from datetime import datetime
+
+TICKER_PATTERN = re.compile(r"^[A-Z0-9.\-]{1,10}$")
+
+
+def sanitize_ticker(ticker: str) -> str:
+    """Sanitize and validate stock ticker input."""
+    sanitized = ticker.strip().upper()
+
+    if not sanitized:
+        raise HTTPException(status_code=400, detail="Ticker cannot be empty")
+
+    if not TICKER_PATTERN.match(sanitized):
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid ticker format. Ticker must contain only letters, numbers, dots, or hyphens (max 10 characters)",
+        )
+
+    return sanitized
+
 
 app = FastAPI()
 
@@ -50,10 +70,13 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 # Stock equity research endpoint - used to be app
 @api.post("/research-equity")
 @limiter.limit("10/minute")
-async def research_equity(request: Request, req: EquityResearchRequest):    
+async def research_equity(request: Request, req: EquityResearchRequest):  
+
+    sanitized_ticker = sanitize_ticker(req.ticker)
+
     res = await research_chain.ainvoke(
         {
-            "ticker": req.ticker,
+            "ticker": sanitized_ticker,
             "trade_duration": req.trade_duration,
             "trade_direction": req.trade_direction,
         }
