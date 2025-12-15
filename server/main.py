@@ -6,6 +6,7 @@ load_dotenv()
 # Suppress gRPC/absl logging before importing anything that uses it
 os.environ["GRPC_VERBOSITY"] = "ERROR"
 os.environ["GLOG_minloglevel"] = "2"
+# os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
