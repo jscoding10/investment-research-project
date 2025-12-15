@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from fastapi import HTTPException
 
 from agents.evaluation.agent import evaluate_aggregated_sentement
+# from agents.filings.agent import get_filings_sentiment
 from agents.news.agent import get_news_sentiment
 from agents.industry.agent import get_industry_sentiment
 from agents.aggregation.agent import get_aggregated_sentiment
@@ -46,6 +47,7 @@ def ticker_router(state: EquityResearchState):
             "industry_research_agent",
             "peer_research_agent",
             "news_research_agent",
+            # "filings_research_agent",
         ]
     else:
         return END
@@ -145,6 +147,22 @@ def news_research_agent(state: EquityResearchState) -> dict:
         return {
             "news_sentiment": "Analysis unavailable due to data retrieval error."
         }
+    
+# def filings_research_agent(state: EquityResearchState) -> dict:
+#     """LLM call to generate SEC filings research sentiment"""
+#     logger.info(f"Starting filings research for {state.ticker}")
+#     try:
+#         filings_sentiment = get_filings_sentiment(ticker=state.ticker)
+#         if filings_sentiment:
+#             logger.info(f"Completed filings research for {state.ticker}")
+#             return {"filings_sentiment": format_sentiment_output(filings_sentiment)}
+#         else:
+#             return {"filings_sentiment": "No SEC filings available for analysis."}
+#     except Exception as e:
+#         logger.error(f"Filings research failed for {state.ticker}: {e}", exc_info=True)
+#         return {
+#             "filings_sentiment": "Analysis unavailable due to data retrieval error."
+#         }    
 
 
 def sentiment_aggregator(state: EquityResearchState) -> dict:
@@ -245,6 +263,13 @@ graph_builder.add_node(
     cache_policy=create_cache_policy(ttl=3600),
 )
 
+# graph_builder.add_node(
+#     "filings_research_agent",
+#     filings_research_agent,
+#     # evict filings research cache after one day
+#     cache_policy=create_cache_policy(ttl=86400),
+# )
+
 graph_builder.add_node(
     "aggregator",
     sentiment_aggregator,
@@ -265,6 +290,7 @@ graph_builder.add_conditional_edges(
         "industry_research_agent",
         "peer_research_agent",
         "news_research_agent",
+        # "filings_research_agent",
         END,
     ],
 )
@@ -276,6 +302,7 @@ graph_builder.add_edge("macro_research_agent", "aggregator")
 graph_builder.add_edge("industry_research_agent", "aggregator")
 graph_builder.add_edge("peer_research_agent", "aggregator")
 graph_builder.add_edge("news_research_agent", "aggregator")
+# graph_builder.add_edge("filings_research_agent", "aggregator")
 graph_builder.add_edge("aggregator", "evaluator")
 graph_builder.add_conditional_edges(
     "evaluator", sentiment_router, {"Compliant": END, "Noncompliant": "aggregator"}
@@ -304,6 +331,7 @@ def input(input_dict: dict) -> EquityResearchState:
         industry_sentiment="",
         peer_sentiment="",
         news_sentiment="",
+        # filings_sentiment="",
         combined_sentiment="",
         compliant=False,
         feedback=None,

@@ -25,6 +25,7 @@ def get_aggregated_sentiment(state: EquityResearchState):
         prompt += f"Peer Analysis:\n{state.peer_sentiment}\n\n"
         prompt += f"Industry Analysis:\n{state.industry_sentiment}\n\n"
         prompt += f"News Analysis:\n{state.news_sentiment}\n\n"
+        # prompt += f"SEC Filings Analysis:\n{state.filings_sentiment}\n\n"
 
     model = LLM_MODELS["groq-llama"]
 

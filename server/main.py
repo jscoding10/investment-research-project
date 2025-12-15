@@ -67,6 +67,7 @@ async def research_equity(request: Request, req: EquityResearchRequest):
             "peer": res.peer_sentiment,
             "industry": res.industry_sentiment,
             "news": res.news_sentiment,
+            # "filings": res.filings_sentiment,
         },
         "combined_sentiment": res.combined_sentiment,
     }
