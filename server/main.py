@@ -1,23 +1,46 @@
 import os
+import re
 from dotenv import load_dotenv
 load_dotenv()
 
 # Suppress gRPC/absl logging before importing anything that uses it
 os.environ["GRPC_VERBOSITY"] = "ERROR"
 os.environ["GLOG_minloglevel"] = "2"
+# os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi import Request
 from fastapi.responses import FileResponse
 from fastapi.exceptions import HTTPException
 from pathlib import Path
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
 
 from graph import research_chain
 from models.api import EquityResearchRequest
 import yfinance as yf
 from datetime import datetime
+
+TICKER_PATTERN = re.compile(r"^[A-Z0-9.\-]{1,10}$")
+
+
+def sanitize_ticker(ticker: str) -> str:
+    """Sanitize and validate stock ticker input."""
+    sanitized = ticker.strip().upper()
+
+    if not sanitized:
+        raise HTTPException(status_code=400, detail="Ticker cannot be empty")
+
+    if not TICKER_PATTERN.match(sanitized):
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid ticker format. Ticker must contain only letters, numbers, dots, or hyphens (max 10 characters)",
+        )
+
+    return sanitized
+
 
 app = FastAPI()
 
@@ -38,15 +61,23 @@ api = FastAPI()
 def ping():
     return {"message": "Server Running"}
 
+limiter = Limiter(key_func=get_remote_address)
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
 # curl -X GET http://localhost:8000/research-equity -H "Content-Type: application/json" -d "{\"ticker\": \"NVDA\"}" | python -m json.tool
 # curl -X POST http://localhost:8000/research-equity -H "Content-Type: application/json" -d '{"ticker":"NVDA","trade_duration":"swing_trade","trade_direction":"long"}'
 
 # Stock equity research endpoint - used to be app
 @api.post("/research-equity")
-async def research_equity(req: EquityResearchRequest):    
-    res = research_chain.invoke(
+@limiter.limit("10/minute")
+async def research_equity(request: Request, req: EquityResearchRequest):  
+
+    sanitized_ticker = sanitize_ticker(req.ticker)
+
+    res = await research_chain.ainvoke(
         {
-            "ticker": req.ticker,
+            "ticker": sanitized_ticker,
             "trade_duration": req.trade_duration,
             "trade_direction": req.trade_direction,
         }
@@ -60,6 +91,7 @@ async def research_equity(req: EquityResearchRequest):
             "peer": res.peer_sentiment,
             "industry": res.industry_sentiment,
             "news": res.news_sentiment,
+            # "filings": res.filings_sentiment,
         },
         "combined_sentiment": res.combined_sentiment,
     }
@@ -121,6 +153,44 @@ async def get_portfolio_prices():
         "failed": failed,
         "updated": datetime.utcnow().isoformat() + "Z",
         "source": "yfinance (bulk + fast_info)"
+    }
+
+@api.get("/debug/industry")
+async def debug_industry(ticker: str = "NVDA", industry: str = "Semiconductors"):
+    from agents.industry.agent import get_industry_sentiment
+    result = get_industry_sentiment(ticker=ticker, industry=industry)
+    return {"ticker": ticker,  "result": result}  
+
+@api.get("/debug/peer")
+async def debug_peer(ticker: str = "AAPL", business: str= "Apple Inc."):
+    """
+    Quick test endpoint to run ONLY the peer agent in isolation.
+    Example: http://localhost:8000/debug/peer?ticker=AAPL&business=Apple Inc.
+    """
+    from agents.peer.agent import get_peer_sentiment
+    
+    result = get_peer_sentiment(ticker=ticker, business=business)
+    
+    return {
+        "ticker": ticker,
+  
+        "result": result
+    } 
+
+@api.get("/debug/news")
+async def debug_news(ticker: str = "LLY", business: str= "Eli Lilly and Company"):
+    """
+    Quick test endpoint to run ONLY the news agent in isolation.
+    Example: http://localhost:8000/debug/news?ticker=AAPL&business=Apple Inc.
+    """
+    from agents.news.agent import get_news_sentiment
+    
+    result = get_news_sentiment(ticker=ticker, business=business)
+    
+    return {
+        "ticker": ticker,
+  
+        "result": result
     }
 ######################################################### Render ###################################################################
 # Mount the /api router

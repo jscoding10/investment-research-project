@@ -1,5 +1,6 @@
 # Core framework
 fastapi
+slowapi
 uvicorn[standard]
 
 # LangChain ecosystem 
@@ -7,13 +8,21 @@ langchain-core
 langchain
 langchain-groq
 langgraph
-# langgraph-cli[inmem]         
+# langgraph-cli[inmem]
+# langchain-huggingface
+# langchain-chroma
+# langchain-text-splitters
+
+# Transformer and Vector database
+# sentence-transformers
+# chromadb         
 
 # Data / finance
 pandas_datareader
 yfinance
 numpy
 fredapi
+sec-edgar-api
 
 # News
 tavily

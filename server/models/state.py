@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Optional
+from typing import Any, Dict, Optional
 from pydantic import BaseModel
 
 class TradeDuration(Enum):
@@ -27,8 +27,13 @@ class EquityResearchState(BaseModel):
     industry_sentiment: Optional[str] = None
     peer_sentiment: Optional[str] = None
     news_sentiment: Optional[str] = None
+    # filings_sentiment: Optional[str] = None
     combined_sentiment: Optional[str] = None
     compliant: bool = False
     feedback: Optional[str] = None
     is_ticker_valid: bool = False
     revision_iteration_count: int = 0
+    ticker_info: Optional[Dict[str, Any]] = None  # Cached yfinance ticker.info
+    # filings_ingested: bool = (
+    #     False  # Whether SEC filings have been ingested to vector store
+    # )

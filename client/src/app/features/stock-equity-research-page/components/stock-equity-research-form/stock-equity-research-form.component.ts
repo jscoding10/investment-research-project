@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, output, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 import { SelectModule } from 'primeng/select';
@@ -28,7 +28,7 @@ export interface StockRequest {
   templateUrl: './stock-equity-research-form.component.html',
   styleUrl: './stock-equity-research-form.component.css',
 })
-export class StockEquityResearchFormComponent {
+export class StockEquityResearchFormComponent implements OnInit {
   // generateReport = output<StockRequest>();
 
   private stockResearchService = inject(StockResearchService);

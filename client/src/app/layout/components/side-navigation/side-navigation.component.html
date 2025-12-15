@@ -1,255 +1,68 @@
-<!-- hidden lg: flex -->
 <aside
-  class="hidden lg:flex flex-col bg-gray-200 rounded-r-2xl h-full border-2 border-gray-400 transition-all duration-300"
+  class="hidden h-full flex-col rounded-r-2xl border-2 border-gray-400 bg-gray-200 transition-all duration-300 lg:flex"
   [class.w-16]="!isExpanded()"
   [class.lg:w-20]="!isExpanded()"
-  [class.w-56]="isExpanded()"
->
-  <!-- Logo — top -->
+  [class.w-56]="isExpanded()">
   <div class="p-2">
     <div
-      class="w-12 h-12 lg:w-14 lg:h-14 rounded-2xl bg-gradient-to-br from-lime-500 to-emerald-600 flex items-center justify-center shadow-lg mx-auto"
-    >
-      <span
-        class="material-symbols-outlined text-white text-2xl lg:text-3xl font-bold"
-        >CI</span
-      >
+      class="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-lime-500 to-emerald-600 shadow-lg lg:h-14 lg:w-14">
+      <span class="material-symbols-outlined text-2xl font-bold text-white lg:text-3xl">CI</span>
     </div>
   </div>
   <div class="pt-4"></div>
-
-  <!-- Navigation -->
-  <nav class="flex-1 px-3 pb-6 space-y-3">
+  <nav class="flex-1 space-y-3 px-3 pb-6">
     @for (item of navItems; track item.route) {
-    <a
-      [routerLink]="item.route"
-      routerLinkActive
-      #rla="routerLinkActive"
-      class="group relative flex items-center w-full h-14 rounded-2xl transition-all duration-200 hover:bg-lime-50"
-      [class.justify-center]="!isExpanded()"
-      [class.justify-start]="isExpanded()"
-      [class.bg-lime-50]="rla.isActive"
-      [class.pl-6]="isExpanded()"
-      [pTooltip]="!isExpanded() ? item.label : ''"
-      tooltipPosition="right"
-      tooltipStyleClass="bg-gray-900 text-white text-xs px-3 py-2 rounded-lg"
-    >
-      <span
-        class="material-symbols-outlined text-md xg:text-xl transition-colors"
-        [class.text-lime-600]="rla.isActive"
-        [class.text-gray-500]="!rla.isActive"
-      >
-        {{ item.icon }}
-      </span>
+      <a
+        [routerLink]="item.route"
+        routerLinkActive
+        #rla="routerLinkActive"
+        class="group relative flex h-14 w-full items-center rounded-2xl transition-all duration-200 hover:bg-lime-50"
+        [class.justify-center]="!isExpanded()"
+        [class.justify-start]="isExpanded()"
+        [class.bg-lime-50]="rla.isActive"
+        [class.pl-6]="isExpanded()"
+        [pTooltip]="!isExpanded() ? item.label : ''"
+        tooltipPosition="right"
+        tooltipStyleClass="bg-gray-900 text-white text-xs px-3 py-2 rounded-lg">
+        <span
+          class="material-symbols-outlined text-md xg:text-xl transition-colors"
+          [class.text-lime-600]="rla.isActive"
+          [class.text-gray-500]="!rla.isActive">
+          {{ item.icon }}
+        </span>
+        @if (isExpanded()) {
+          <span
+            class="ml-4 flex overflow-hidden whitespace-nowrap text-center text-xs font-medium text-gray-700 transition-all">
+            {{ item.label }}
+          </span>
+        }
 
-      <!-- Label – visible only when expanded -->
-      @if(isExpanded()){
-      <span
-        class="ml-4 text-xs font-medium text-gray-700 whitespace-nowrap overflow-hidden transition-all flex text-center"
-      >
-        {{ item.label }}
-      </span>
-      }
-
-      <div
-        class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-10 bg-lime-500 rounded-r-full opacity-0 transition-opacity"
-        [class.opacity-100]="rla.isActive"
-      ></div>
-    </a>
+        <div
+          class="absolute left-0 top-1/2 h-10 w-1 -translate-y-1/2 rounded-r-full bg-lime-500 opacity-0 transition-opacity"
+          [class.opacity-100]="rla.isActive"></div>
+      </a>
     }
   </nav>
-
-  <!-- Open/Close Sidebar Button — bottom -->
   <div class="px-3 pb-3">
     <button
       (click)="toggleSidebar()"
-      class="group relative flex items-center w-full h-full rounded-2xl transition-all duration-200 hover:bg-lime-50 mx-auto"
+      class="group relative mx-auto flex h-full w-full items-center rounded-2xl transition-all duration-200 hover:bg-lime-50"
       [class.justify-center]="!isExpanded()"
       [class.justify-start]="isExpanded()"
       [class.pl-6]="isExpanded()"
-      [pTooltip]="
-        !isExpanded() ? (isExpanded() ? 'Close Menu' : 'Open Menu') : ''
-      "
+      [pTooltip]="!isExpanded() ? (isExpanded() ? 'Close Menu' : 'Open Menu') : ''"
       tooltipPosition="right"
-      tooltipStyleClass="bg-gray-900 text-white text-xs px-3 py-2 rounded-lg"
-    >
-      <span
-        class="material-symbols-outlined text-md xg:text-xl text-gray-500 transition-colors"
-      >
-        {{ isExpanded() ? "chevron_left" : "chevron_right" }}
+      tooltipStyleClass="bg-gray-900 text-white text-xs px-3 py-2 rounded-lg">
+      <span class="material-symbols-outlined text-md xg:text-xl text-gray-500 transition-colors">
+        {{ isExpanded() ? 'chevron_left' : 'chevron_right' }}
       </span>
-
-      <!-- Label – visible only when expanded -->
       @if (isExpanded()) {
-      <span
-        class="ml-4 text-xs font-medium text-gray-700 whitespace-nowrap overflow-hidden transition-all"
-      >
-        {{ isExpanded() ? "Close Menu" : "Open Menu" }}
-      </span>
+        <span class="ml-4 overflow-hidden whitespace-nowrap text-xs font-medium text-gray-700 transition-all">
+          {{ isExpanded() ? 'Close Menu' : 'Open Menu' }}
+        </span>
       }
-
-      <!-- Optional active indicator (matching nav items) -->
       <div
-        class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-10 bg-lime-500 rounded-r-full opacity-0 transition-opacity"
-      ></div>
+        class="absolute left-0 top-1/2 h-10 w-1 -translate-y-1/2 rounded-r-full bg-lime-500 opacity-0 transition-opacity"></div>
     </button>
   </div>
 </aside>
-
-<!-- Original with no Expansion: -->
-<!-- <aside
-  class="flex flex-col bg-gray-200 rounded-r-2xl h-full border-2 border-gray-400 transition-all duration-300"
-  [class.w-20]="!isExpanded"
-  [class.lg:w-24]="!isExpanded"
-  [class.w-50]="isExpanded" -->
-<!-- > -->
-<!-- Logo — top -->
-<!-- <div class="p-2">
-    <div
-      class="w-12 h-12 lg:w-14 lg:h-14 rounded-2xl bg-gradient-to-br from-lime-500 to-emerald-600 flex items-center justify-center shadow-lg mx-auto"
-    >
-      <span
-        class="material-symbols-outlined text-white text-2xl lg:text-3xl font-bold"
-        >AP</span
-      >
-    </div>
-  </div>
-  <div class="pt-4"></div> -->
-
-<!-- Navigation -->
-<!-- <nav class="flex-1 px-3 pb-6 space-y-3">
-    @for (item of navItems; track item.route) {
-    <a
-      [routerLink]="item.route"
-      routerLinkActive
-      #rla="routerLinkActive"
-      class="group relative flex items-center w-full h-14 rounded-2xl transition-all duration-200 hover:bg-lime-50"
-      [class.justify-center]="!isExpanded"
-      [class.justify-start]="isExpanded"
-      [class.bg-lime-50]="rla.isActive"
-      [class.pl-6]="isExpanded"
-      [pTooltip]="!isExpanded ? item.label : ''"
-      tooltipPosition="right"
-      tooltipStyleClass="bg-gray-900 text-white text-xs px-3 py-2 rounded-lg"
-    >
-      <span
-        class="material-symbols-outlined text-xl transition-colors"
-        [class.text-lime-600]="rla.isActive"
-        [class.text-gray-500]="!rla.isActive"
-      >
-        {{ item.icon }}
-      </span> -->
-
-<!-- Label – visible only when expanded -->
-<!-- <span
-        class="ml-4 text-sm font-medium text-gray-700 whitespace-nowrap overflow-hidden transition-all"
-        [class.opacity-0]="!isExpanded"
-        [class.w-0]="!isExpanded"
-        [class.opacity-100]="isExpanded"
-        [class.w-auto]="isExpanded"
-      >
-        {{ item.label }}
-      </span>
-
-      <div
-        class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-10 bg-lime-500 rounded-r-full opacity-0 transition-opacity"
-        [class.opacity-100]="rla.isActive"
-      ></div>
-    </a>
-    }
-  </nav> -->
-
-<!-- Logout — bottom -->
-<!-- <div class="p-6">
-    <button
-      (click)="toggleSidebar()"
-      class="w-12 h-12 rounded-2xl hover:bg-gray-100 flex items-center transition-all duration-300 mx-auto group"
-      [class.w-full]="isExpanded"
-      [class.justify-center]="!isExpanded"
-      [class.justify-start]="isExpanded"
-      [class.pl-6]="isExpanded"
-      pTooltip="!isExpanded ? 'Logout' : ''"
-      tooltipPosition="right"
-      tooltipStyleClass="bg-gray-900 text-white text-xs px-3 py-2 rounded-lg"
-    >
-      <span class="material-symbols-outlined text-gray-500 text-xl">
-        logout
-      </span> -->
-
-<!-- Logout text when expanded -->
-<!-- <span
-        class="ml-4 text-sm font-medium text-gray-700 whitespace-nowrap overflow-hidden transition-all"
-        [class.opacity-0]="!isExpanded"
-        [class.w-0]="!isExpanded"
-        [class.opacity-100]="isExpanded"
-        [class.w-auto]="isExpanded"
-      >
-        Logout
-      </span>
-    </button>
-  </div>
-</aside>
-
-<aside
-  class="flex flex-col bg-gray-200 rounded-r-2xl w-20 lg:w-24 h-full border-2 border-gray-400"
-> -->
-<!-- shadow-xl mr-1 ml-1 bg-white-->
-<!-- Logo — top -->
-<!-- <div class="p-2">
-    <div
-      class="w-12 h-12 lg:w-14 lg:h-14 rounded-2xl bg-gradient-to-br from-lime-500 to-emerald-600 flex items-center justify-center shadow-lg mx-auto"
-    >
-      <span
-        class="material-symbols-outlined text-white text-2xl lg:text-3xl font-bold"
-        >AP</span
-      >
-    </div>
-  </div>
-  <div class="pt-4"></div> -->
-
-<!-- Navigation — fills all space -->
-<!-- <nav class="flex-1 px-3 pb-6 space-y-3"> -->
-<!-- @for (item of navItems; track item.route) { -->
-<!-- Added flex col for text -->
-<!-- <a
-      [routerLink]="item.route"
-      routerLinkActive
-      #rla="routerLinkActive"
-      class="group relative flex flex-col items-center justify-center w-full h-14 rounded-2xl transition-all duration-200 hover:bg-lime-50"
-      [class.bg-lime-50]="rla.isActive"
-      [pTooltip]="item.label"
-      tooltipPosition="right"
-      tooltipStyleClass="bg-gray-900 text-white text-xs px-3 py-2 rounded-lg"
-    >
-      <span
-        class="material-symbols-outlined text-md xg:text-xl transition-colors mb-2"
-        [class.text-lime-600]="rla.isActive"
-        [class.text-gray-500]="!rla.isActive"
-      >
-        {{ item.icon }}
-      </span>
-
-      <div class="text-xs flex justify-center">{{ item.label }}</div>
-      <div
-        class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-10 bg-lime-500 rounded-r-full opacity-0 transition-opacity"
-        [class.opacity-100]="rla.isActive"
-      ></div>
-    </a>
-
-    }
-  </nav> -->
-
-<!-- Logout — pinned to bottom -->
-<!-- <div class="p-6">
-    <button
-      class="w-12 h-12 rounded-2xl hover:bg-gray-100 flex items-center justify-center transition-colors mx-auto"
-      pTooltip="Logout"
-      tooltipStyleClass="bg-gray-900 text-white text-xs px-3 py-2 rounded-lg"
-      tooltipPosition="right"
-    >
-      <span class="material-symbols-outlined text-gray-500 text-xl"
-        >logout</span
-      >
-    </button>
-  </div>
-</aside> -->

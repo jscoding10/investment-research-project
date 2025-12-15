@@ -22,4 +22,10 @@ def evaluate_aggregated_sentement(sentiment: str):
     )
     result = llm.invoke(prompt)
 
+    if result is None:
+        return {
+            "compliant": True,
+            "feedback": "Evaluation unavailable due to API error.",
+        }
+
     return {"compliant": result.compliant, "feedback": result.feedback}

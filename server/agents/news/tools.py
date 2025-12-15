@@ -53,7 +53,7 @@ def search_recent_stock_news(ticker: str, business: str) -> str:
                 line = f"{title} — {snippet} [SOURCE: {url} | {date}]"
                 all_results.append(line)
         except Exception as e:
-            continue  # Silently continue on one failed query
+            continue 
 
     if not all_results:
         return "No credible news found in the past 30 days for {ticker} ({business})."
@@ -73,8 +73,6 @@ def search_recent_stock_news(ticker: str, business: str) -> str:
 
     return "\n\n".join(deduped[:15])
 
-
-# The actual tool that gets bound to the agent
 search_news_tool = StructuredTool.from_function(
     func=search_recent_stock_news,
     name="search_recent_stock_news",
