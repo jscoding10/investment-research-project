@@ -11,7 +11,7 @@ module.exports = {
   bracketSameLine: true,
   arrowParens: 'always',
   singleAttributePerLine: true,
-  plugins: ['prettier-plugin-tailwindcss'], // optional but recommended
+  plugins: ['prettier-plugin-tailwindcss'],
   overrides: [
     {
       files: '*.html',
