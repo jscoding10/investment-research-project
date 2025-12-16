@@ -18,75 +18,36 @@ export class StockResearchService {
     console.log(request, 'REQUEST');
     this.state.generateReport(request); // update UI immediately
     // MOCK: Simulate API delay and return fake data
-    setTimeout(() => {
-      const mockReport: StockReport = {
-        // {
+    // setTimeout(() => {
+    //   const mockReport: StockReport = {
+    //     ticker: request.ticker.toUpperCase(),
+    //     sentiment_analysis: {
+    //       fundamental: `UNDERVALUED\n\n* P/E ratio of 44.34 is reasonable given 65% revenue growth, resulting in PEG of approximately 0.68.\n* Exceptional ROE of 99.24% and ROA of 70.40% indicate strong profitability.\n* Low debt-to-equity ratio of 0.09 and high current ratio of 4.47 show excellent financial health.\n\nConfidence: High`,
+    //       technical: `NEUTRAL\n\n* RSI at 58.71 indicates neutral momentum.\n* Price below 20-day (184.75) and 50-day (184.34) moving averages, signaling short-term weakness.\n* MACD shows no strong crossover, maintaining neutral stance.\n* Bollinger Bands have price in the middle band, no extreme volatility.\n* Long-term trend remains bullish as price above 200-day MA.\n\nConfidence: Medium`,
+    //       macro: `BULLISH\n\n* GDP growth at 2.8% annualized in Q3 2024 supports economic expansion.\n* CPI inflation at 2.7% in November 2024 indicates cooling prices, nearing Fed target.\n* Consumer sentiment improving, with potential rate cuts boosting equity markets.\n\nConfidence: High`,
+    //       industry: `POSITIVE\n\n* Semiconductor market driven by AI, expected 15% growth in 2025. [bloomberg.com, Nov 15, 2025]\n* Nvidia leads in GPU, b competition from AMD and Huawei increasing. [reuters.com, Dec 4, 2025]\n* Tailwinds: data center boom; Headwinds: geopolitical tensions. [cnbc.com, Nov 25, 2025]\n\nConfidence: High`,
+    //       news: `BULLISH\n\n* Nvidia's cash pile enables strategic investments, like in OpenAI. [cnbc.com, Dec 4, 2025]\n* Strong AI demand continues, with high margins. [wsj.com, Dec 3, 2025]\n* Chinese rivals emerging, b Nvidia's tech lead persists. [cnbc.com, Dec 5, 2025]\n\nConfidence: Medium`,
+    //     },
+    //     combined_sentiment: `Summary of Research Findings:\n- Fundamental: NVDA is undervalued based on a PEG ratio of 0.68 driven by 65% revenue growth, with exceptional profitability metrics like 99.24% ROE and 70.40% ROA, alongside a strong balance sheet featuring low debt and high liquidity.\n- Technical: The stock shows neutral momentum with an RSI of 58.71, short-term weakness as price sits below key moving averages, b maintains a long-term bullish trend above the 200-day MA.\n- Macro: Bullish conditions prevail with 2.8% GDP growth in Q3 2024 and cooling inflation at 2.7% in November, potentially leading to supportive rate cuts.\n- Industry: Positive outlook due to AI-fueled 15% sector growth in 2025 and data center expansion, though tempered by increasing competition and geopolitical risks.\n- News: Bullish sentiment from robust AI demand, high margins, and strategic investments, despite emerging Chinese competitors.\n\nConsensus and Divergence:\n- Consensus: Strong growth prospects, profitability, and AI-driven tailwinds across fundamental, macro, industry, and news analyses.\n- Divergence: Technical analysis indicates short-term neutrality and weakness, contrasting with the positive long-term views from other perspectives.\n\nWeighting of Perspectives:\n- Fundamental 30% high confidence in core metrics and valuation.\n- Industry 25% critical for tech sector dynamics and growth drivers.\n- News 20% reflects recent events influencing market sentiment.\n- Macro 15% provides supportive broader context.\n- Technical 10% focused on short-term signals, less impactful for long-term thesis.\n\nOverall Sentiment: BEARISH\n\nConclusion: NVDA's undervalued position, fueled by explosive AI growth and strong financial health, combined with favorable macro and industry tailwinds, underpins a bullish investment thesis. Recent news reinforces demand strength despite competition. While technicals signal short-term caution, the overall opportunity favors long-term investors, acknowledging geopolitical uncertainties.`,
+    //   };
+    //   this.state.completeWithReport(mockReport);
+    // }, 5000); // 2-second fake delay to see loading skeleton
 
-        ticker: 'NVDA',
-
-        sentiment_analysis: {
-          fundamental:
-            "[Valuation.OVERVALUED]\n\n* The P/E ratio of 43.32 is higher than the industry average\n* The price-to-book ratio of 35.78 indicates overvaluation\n* The current price of $175.02 is below the mean target price of $250.93, but the stock's high growth rate and strong financials may justify the current price\n\nConfidence: Confidence.MEDIUM",
-
-          technical:
-            '[Sentiment.BEARISH]\n\n* The RSI (45.05) is in neutral territory, indicating a balance between buyers and sellers\n* The Stochastic Oscillator (29.68) is also in neutral territory, suggesting a lack of strong momentum\n* The SMA 50 trend is -1, indicating the price is below the 50-day moving average\n* The MACD (-1.94) is below the signal line, indicating a bearish trend\n* The Bollinger Band position (2.64) is neutral, but the overall sentiment score (-0.33) leans towards a bearish outlook\n\nConfidence: Confidence.MEDIUM',
-
-          macro:
-            '[Sentiment.NEUTRAL]\n\n* The GDP growth rate has increased by 4.4 percentage points in the last quarter, ending on 2025-04-01\n* The inflation rate has been steadily increasing, with a year-over-year inflation rate of 1.66% as of 2025-09-01\n* Consumer sentiment has been declining, with a current value of 53.6 as of 2025-10-01\n\nConfidence: Confidence.MEDIUM',
-
-          peer: "Error executing agent: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01katbxgdbee4r8x0av29ed14v` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Used 5726, Requested 5683. Please try again in 25.5675s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'compound', 'code': 'rate_limit_exceeded'}}",
-
-          industry:
-            '**BULLISH**  \n* AI‑driven demand propels the global semiconductor market to grow ≈ 15 % in 2025, with memory sales up > 24 % and non‑memory (advanced‑node ICs) up ≈ 13 % driven by AI servers and GPUs【IDC, 2025‑10‑01】  \n* Tailwind: Explosive AI adoption fuels demand for Nvidia’s GPUs and high‑bandwidth memory, boosting NVDA’s revenue outlook; Headwind: Over‑reliance on AI could temper growth in 2026, risking a slowdown for AI‑centric chipmakers【Semiconductor Intelligence, 2025‑09‑15】  \n* Emerging pattern: Fabless/IP leaders (Nvidia, Broadcom) post strong revenue and net‑income growth, while traditional IDMs and equipment suppliers face contraction, accelerating industry consolidation【Infosys, 2025‑10‑20】\n\n**Confidence:** High',
-
-          news: "Error executing agent: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01katbxgdbee4r8x0av29ed14v` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Used 4986, Requested 3404. Please try again in 2.925s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'compound', 'code': 'rate_limit_exceeded'}}",
+    return this.http
+      .post<StockReport>(`${this.baseUrl}/research-equity`, request)
+      .pipe(
+        finalize(() => {
+          // If request changed mid-flight, ignore stale response
+          if (this.state.request()?.ticker !== request.ticker) return;
+        }),
+      )
+      .subscribe({
+        next: (report) => {
+          this.state.completeWithReport(report);
+          console.log(report, 'REPORT');
         },
 
-        combined_sentiment:
-          "**Summary of Research Findings:**\n- Fundamental: The stock is overvalued with a high P/E ratio of 43.32 and price-to-book ratio of 35.78. However, its strong financials and high growth rate may justify the current price. The current price of $175.02 is below the mean target price of $250.93.\n- Technical: The technical analysis indicates a bearish sentiment with the MACD below the signal line and the price below the 50-day moving average. The RSI and Stochastic Oscillator are in neutral territory.\n- Macro: The macro analysis is neutral, with increasing GDP growth and inflation rates, but declining consumer sentiment.\n- Industry: The industry analysis is bullish, driven by AI demand propelling the global semiconductor market to grow approximately 15% in 2025.\n- Peer: Unable to analyze due to error.\n- News: Unable to analyze due to error.\n\nConsensus and Divergence:\n- Consensus: There is a consensus among the fundamental and technical analyses that the stock may be overvalued and has a bearish outlook.\n- Divergence: The industry analysis diverges from the fundamental and technical analyses, indicating a bullish outlook due to AI-driven demand.\n\nWeighting of Perspectives:\n- Fundamental: 25% - The fundamental analysis is important for a swing trade, but the high growth rate and strong financials may justify the current price.\n- Industry: 30% - The industry analysis is crucial for understanding the demand drivers and growth potential.\n- Peer: 0% - Unable to analyze due to error.\n- News: 0% - Unable to analyze due to error.\n- Macro: 20% - The macro analysis is neutral and has a moderate impact on the trade.\n- Technical: 25% - The technical analysis is important for entry and exit points in a swing trade.\n\n**Overall Sentiment:** BEARISH\n\n**Conclusion:** The overall sentiment is bearish, driven by the technical analysis and fundamental overvaluation. However, the industry analysis presents a bullish case due to AI-driven demand. Considering the swing trade duration, the technical and fundamental analyses are prioritized. The trade direction is short, which aligns with the bearish sentiment. Despite the bullish industry outlook, the current overvaluation and bearish technicals suggest a short position. Nevertheless, the strong growth rate and AI-driven demand may limit the downside potential, and investors should closely monitor the stock's price and industry trends.",
-      };
-      this.state.completeWithReport(mockReport);
-    }, 5000); // 2-second fake delay to see loading skeleton
+        error: () => this.state.failWithError('Failed to generate report. Try again.'),
+      });
   }
-  //   return this.http
-  //     .post<StockReport>(`${this.baseUrl}/research-equity`, request)
-  //     .pipe(
-  //       finalize(() => {
-  //         // If request changed mid-flight, ignore stale response
-  //         if (this.state.request()?.ticker !== request.ticker) return;
-  //       }),
-  //     )
-  //     .subscribe({
-  //       next: (report) => {
-  //         this.state.completeWithReport(report);
-  //         console.log(report, 'REPORT');
-  //       },
-
-  //       error: () => this.state.failWithError('Failed to generate report. Try again.'),
-  //     });
-  // }
 }
-
-// {
-
-//     "ticker": "NVDA",
-
-//     "sentiment_analysis": {
-
-//         "fundamental": "[Valuation.OVERVALUED]\n\n* The P/E ratio of 43.32 is higher than the industry average\n* The price-to-book ratio of 35.78 indicates overvaluation\n* The current price of $175.02 is below the mean target price of $250.93, but the stock's high growth rate and strong financials may justify the current price\n\nConfidence: Confidence.MEDIUM",
-
-//         "technical": "[Sentiment.BEARISH]\n\n* The RSI (45.05) is in neutral territory, indicating a balance between buyers and sellers\n* The Stochastic Oscillator (29.68) is also in neutral territory, suggesting a lack of strong momentum\n* The SMA 50 trend is -1, indicating the price is below the 50-day moving average\n* The MACD (-1.94) is below the signal line, indicating a bearish trend\n* The Bollinger Band position (2.64) is neutral, but the overall sentiment score (-0.33) leans towards a bearish outlook\n\nConfidence: Confidence.MEDIUM",
-
-//         "macro": "[Sentiment.NEUTRAL]\n\n* The GDP growth rate has increased by 4.4 percentage points in the last quarter, ending on 2025-04-01\n* The inflation rate has been steadily increasing, with a year-over-year inflation rate of 1.66% as of 2025-09-01\n* Consumer sentiment has been declining, with a current value of 53.6 as of 2025-10-01\n\nConfidence: Confidence.MEDIUM",
-
-//         "peer": "Error executing agent: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01katbxgdbee4r8x0av29ed14v` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Used 5726, Requested 5683. Please try again in 25.5675s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'compound', 'code': 'rate_limit_exceeded'}}",
-
-//         "industry": "**BULLISH**  \n* AI‑driven demand propels the global semiconductor market to grow ≈ 15 % in 2025, with memory sales up > 24 % and non‑memory (advanced‑node ICs) up ≈ 13 % driven by AI servers and GPUs【IDC, 2025‑10‑01】  \n* Tailwind: Explosive AI adoption fuels demand for Nvidia’s GPUs and high‑bandwidth memory, boosting NVDA’s revenue outlook; Headwind: Over‑reliance on AI could temper growth in 2026, risking a slowdown for AI‑centric chipmakers【Semiconductor Intelligence, 2025‑09‑15】  \n* Emerging pattern: Fabless/IP leaders (Nvidia, Broadcom) post strong revenue and net‑income growth, while traditional IDMs and equipment suppliers face contraction, accelerating industry consolidation【Infosys, 2025‑10‑20】\n\n**Confidence:** High",
-
-//         "news": "Error executing agent: Error code: 429 - {'error': {'message': 'Rate limit reached for model `openai/gpt-oss-120b` in organization `org_01katbxgdbee4r8x0av29ed14v` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Used 4986, Requested 3404. Please try again in 2.925s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing', 'type': 'compound', 'code': 'rate_limit_exceeded'}}"
-
-//     },
-
-//     "combined_sentiment": "**Summary of Research Findings:**\n- Fundamental: The stock is overvalued with a high P/E ratio of 43.32 and price-to-book ratio of 35.78. However, its strong financials and high growth rate may justify the current price. The current price of $175.02 is below the mean target price of $250.93.\n- Technical: The technical analysis indicates a bearish sentiment with the MACD below the signal line and the price below the 50-day moving average. The RSI and Stochastic Oscillator are in neutral territory.\n- Macro: The macro analysis is neutral, with increasing GDP growth and inflation rates, but declining consumer sentiment.\n- Industry: The industry analysis is bullish, driven by AI demand propelling the global semiconductor market to grow approximately 15% in 2025.\n- Peer: Unable to analyze due to error.\n- News: Unable to analyze due to error.\n\nConsensus and Divergence:\n- Consensus: There is a consensus among the fundamental and technical analyses that the stock may be overvalued and has a bearish outlook.\n- Divergence: The industry analysis diverges from the fundamental and technical analyses, indicating a bullish outlook due to AI-driven demand.\n\nWeighting of Perspectives:\n- Fundamental: 25% - The fundamental analysis is important for a swing trade, but the high growth rate and strong financials may justify the current price.\n- Industry: 30% - The industry analysis is crucial for understanding the demand drivers and growth potential.\n- Peer: 0% - Unable to analyze due to error.\n- News: 0% - Unable to analyze due to error.\n- Macro: 20% - The macro analysis is neutral and has a moderate impact on the trade.\n- Technical: 25% - The technical analysis is important for entry and exit points in a swing trade.\n\n**Overall Sentiment:** BEARISH\n\n**Conclusion:** The overall sentiment is bearish, driven by the technical analysis and fundamental overvaluation. However, the industry analysis presents a bullish case due to AI-driven demand. Considering the swing trade duration, the technical and fundamental analyses are prioritized. The trade direction is short, which aligns with the bearish sentiment. Despite the bullish industry outlook, the current overvaluation and bearish technicals suggest a short position. Nevertheless, the strong growth rate and AI-driven demand may limit the downside potential, and investors should closely monitor the stock's price and industry trends."
-
-// }
