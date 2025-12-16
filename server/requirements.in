@@ -8,14 +8,14 @@ langchain-core
 langchain
 langchain-groq
 langgraph
-# langgraph-cli[inmem]
-# langchain-huggingface
-# langchain-chroma
-# langchain-text-splitters
+langgraph-cli[inmem]
+langchain-huggingface
+langchain-chroma
+langchain-text-splitters
 
 # Transformer and Vector database
-# sentence-transformers
-# chromadb         
+sentence-transformers
+chromadb         
 
 # Data / finance
 pandas_datareader
