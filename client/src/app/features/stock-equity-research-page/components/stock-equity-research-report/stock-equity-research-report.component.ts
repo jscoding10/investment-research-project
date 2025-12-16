@@ -1,21 +1,20 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SimpleMarkdownComponent } from '../simple-markdown/simple-markdown.component';
-import { StocksState } from '../../state/stock-state';
+import { MarkdownModule } from 'ngx-markdown';
 import { StockReport } from '../../state/stock-state';
 import { StockEquityResearchStateService } from '../../services/stock-equity-research-state.service';
 
 @Component({
   selector: 'app-stock-equity-research-report',
-  imports: [CommonModule, SimpleMarkdownComponent],
+  imports: [CommonModule, MarkdownModule],
   templateUrl: './stock-equity-research-report.component.html',
   styleUrl: './stock-equity-research-report.component.css',
 })
 export class StockEquityResearchReportComponent {
   private state = inject(StockEquityResearchStateService);
 
-  report = this.state.report; // read-only signal
-  isLoading = this.state.isLoading; // read-only signal
+  report = this.state.report;
+  isLoading = this.state.isLoading;
   ticker = this.state.ticker;
   error = this.state.error;
 
@@ -34,7 +33,6 @@ export class StockEquityResearchReportComponent {
     if (text.includes('OVERALL SENTIMENT: BEARISH') || text.includes('**OVERALL SENTIMENT:** BEARISH')) {
       return 'BEARISH';
     }
-    // Fallback: look for the word right before the final conclusion
     if (text.includes('BULLISH')) return 'BULLISH';
     if (text.includes('BEARISH')) return 'BEARISH';
 

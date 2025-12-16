@@ -29,7 +29,7 @@
           <h1 class="text-5xl font-black">{{ ticker().toUpperCase() }}</h1>
           <span
             class="inline-block rounded-full px-6 py-5 text-xl font-black tracking-wider
-                 {{
+                  {{
               getOverallSentiment(data) === 'BULLISH'
                 ? 'border-2 border-lime-400 bg-lime-400/20 text-lime-400'
                 : getOverallSentiment(data) === 'BEARISH'
@@ -45,8 +45,8 @@
         <div
           class="rounded-2xl border border-lime-500/30 bg-gradient-to-br from-lime-900/20 to-transparent p-8 backdrop-blur">
           <h2 class="mb-6 text-3xl font-bold text-lime-400">Overall Conclusion</h2>
-          <app-simple-markdown
-            [markdown]="data.combined_sentiment"
+          <markdown
+            [data]="data.combined_sentiment"
             class="prose prose-invert prose-lg max-w-none" />
         </div>
       </div>
@@ -54,38 +54,38 @@
         <div class="grid gap-6 lg:grid-cols-3">
           <div class="rounded-2xl border border-white/10 bg-white/5 p-6 transition hover:border-lime-500/50">
             <h3 class="mb-4 text-xl font-bold text-lime-400">Fundamental</h3>
-            <app-simple-markdown
-              [markdown]="data.sentiment_analysis.fundamental"
+            <markdown
+              [data]="data.sentiment_analysis.fundamental"
               class="prose prose-invert prose-sm break-words" />
           </div>
           <div class="rounded-2xl border border-white/10 bg-white/5 p-6 transition hover:border-lime-500/50">
             <h3 class="mb-4 text-xl font-bold text-lime-400">Technical</h3>
-            <app-simple-markdown
-              [markdown]="data.sentiment_analysis.technical"
+            <markdown
+              [data]="data.sentiment_analysis.technical"
               class="prose prose-invert prose-sm break-words" />
           </div>
           <div class="rounded-2xl border border-white/10 bg-white/5 p-6 transition hover:border-lime-500/50">
             <h3 class="mb-4 text-xl font-bold text-lime-400">Peer Comparison</h3>
-            <app-simple-markdown
-              [markdown]="data.sentiment_analysis.peer"
+            <markdown
+              [data]="data.sentiment_analysis.peer"
               class="prose prose-invert prose-sm break-words" />
           </div>
           <div class="rounded-2xl border border-white/10 bg-white/5 p-6 transition hover:border-lime-500/50">
             <h3 class="mb-4 text-xl font-bold text-lime-400">Industry</h3>
-            <app-simple-markdown
-              [markdown]="data.sentiment_analysis.industry"
+            <markdown
+              [data]="data.sentiment_analysis.industry"
               class="prose prose-invert prose-sm break-words" />
           </div>
           <div class="rounded-2xl border border-white/10 bg-white/5 p-6 transition hover:border-lime-500/50">
             <h3 class="mb-4 text-xl font-bold text-lime-400">News & Sentiment</h3>
-            <app-simple-markdown
-              [markdown]="data.sentiment_analysis.news"
+            <markdown
+              [data]="data.sentiment_analysis.news"
               class="prose prose-invert prose-sm break-words" />
           </div>
           <div class="rounded-2xl border border-white/10 bg-white/5 p-6 transition hover:border-lime-500/50">
             <h3 class="mb-4 text-xl font-bold text-lime-400">Macro Factors</h3>
-            <app-simple-markdown
-              [markdown]="data.sentiment_analysis.macro"
+            <markdown
+              [data]="data.sentiment_analysis.macro"
               class="prose prose-invert prose-sm break-words" />
           </div>
         </div>
