@@ -1,8 +1,12 @@
-<div class="sticky top-0 z-40 border-b border-gray-200 bg-lime-400 px-2 py-4 shadow-sm">
+<div class="sticky top-0 z-40 border-b border-gray-200 bg-lime-400 shadow-sm lg:px-2 lg:py-4">
   <div class="flex items-center justify-between">
     <div class="flex items-center gap-3">
-      <i class="pi pi-prime text-3xl text-lime-600"></i>
-      <span class="text-3xl font-bold text-gray-900">Conviction Insight</span>
+      <i class="pi pi-prime text-3xl text-lime-600 lg:hidden"></i>
+      <img
+        src="logo.png"
+        alt="Conviction Insight Logo"
+        class="mr-3 flex h-16 w-auto lg:hidden" />
+      <span class="text-xl font-bold text-gray-900 lg:text-2xl">Conviction Insight</span>
     </div>
     <button
       (click)="toggleMobileMenu.emit()"
