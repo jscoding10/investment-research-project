@@ -1,11 +1,10 @@
 import os
 import dotenv
-from langchain_groq import ChatGroq
 
 from agents.aggregation.prompt import research_aggregation_prompt
 from models.state import EquityResearchState
 from agents.shared.agent_utils import run_agent_with_tools
-from agents.shared.llm_models import LLM_MODELS
+from agents.shared.llm_models import LLM_MODELS, get_groq_llm
 
 
 dotenv.load_dotenv()
@@ -37,7 +36,8 @@ def get_aggregated_sentiment(state: EquityResearchState):
             "Make sure you have a .env file with GROQ_API_KEY_3=your_real_key_here"
             )  
 
-    llm = ChatGroq(model = model, temperature = 0.2, groq_api_key = api_key)
+    llm = get_groq_llm(model = model, api_key = api_key, temperature = 0.2)
+
     result = run_agent_with_tools(llm, prompt)
 
     return result

@@ -3,10 +3,9 @@ import os
 from typing import Any, Dict, Optional
 
 import dotenv
-from langchain_groq import ChatGroq
 
 from agents.shared.agent_utils import run_agent_with_tools
-from agents.shared.llm_models import LLM_MODELS
+from agents.shared.llm_models import LLM_MODELS, get_groq_llm
 from agents.fundamentals.prompt import fundamentals_research_prompt
 from agents.fundamentals.tools import (
     get_fundamentals_tool,
@@ -28,7 +27,7 @@ def get_fundamental_sentiment(
         ticker: Stock ticker symbol
         cached_info: Optional pre-fetched yfinance ticker.info to avoid duplicate API calls
     """
-    model_name = LLM_MODELS['groq-llama']
+    model = LLM_MODELS['groq-llama']
 
     api_key = os.getenv("GROQ_API_KEY")
     if not api_key:
@@ -37,11 +36,8 @@ def get_fundamental_sentiment(
             "Make sure you have a .env file with GROQ_API_KEY=your_real_key_here"
         )
 
-    llm = ChatGroq(
-        model= model_name,
-        temperature= 0.0,
-        groq_api_key = api_key       
-    )
+
+    llm = get_groq_llm(model = model, api_key = api_key, temperature = 0.0)
 
     if cached_info is not None:
         # Use cached info - call function directly instead of via tool

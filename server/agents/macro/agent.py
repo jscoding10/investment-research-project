@@ -1,12 +1,11 @@
 import os
 import dotenv
-from langchain_groq import ChatGroq
 from logger import get_logger
 
 from agents.macro.prompt import macro_research_prompt
 from agents.macro.tools import get_macro_data_tool
 from agents.shared.agent_utils import run_agent_with_tools
-from agents.shared.llm_models import LLM_MODELS
+from agents.shared.llm_models import LLM_MODELS, get_groq_llm
 from models.agent import MacroSentimentOutput
 
 dotenv.load_dotenv()
@@ -21,7 +20,7 @@ def get_macro_sentiment() -> str:
         prompt = macro_research_prompt
         tools = [get_macro_data_tool]
 
-        model_name = LLM_MODELS["groq-llama"] 
+        model = LLM_MODELS["groq-llama"] 
 
         api_key = os.getenv("GROQ_API_KEY_2")
         if not api_key:
@@ -30,11 +29,8 @@ def get_macro_sentiment() -> str:
                 "Make sure you have a .env file with GROQ_API_KEY_2=your_real_key_here"
             )   
 
-        llm = ChatGroq(
-            model = model_name,
-            temperature = 0.0,  
-            groq_api_key = api_key         
-        )
+
+        llm = get_groq_llm(model = model, api_key = api_key, temperature = 0.0)
 
         result = run_agent_with_tools(llm, prompt, tools, MacroSentimentOutput)
         return result

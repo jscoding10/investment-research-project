@@ -1,9 +1,8 @@
 import os
 import dotenv
-from langchain_groq import ChatGroq
 
 from agents.evaluation.prompt import sentiment_evaluator_prompt
-from agents.shared.llm_models import LLM_MODELS
+from agents.shared.llm_models import LLM_MODELS, get_groq_llm
 from models.agent import AggregatorFeedback
 
 dotenv.load_dotenv()
@@ -24,9 +23,9 @@ def evaluate_aggregated_sentement(sentiment: str):
             "GROQ_API_KEY not found! "
             "Make sure you have a .env file with GROQ_API_KEY_3=your_real_key_here"
             )  
-    llm = ChatGroq(model = model, temperature = 0.0, groq_api_key = api_key).with_structured_output(
-        schema=AggregatorFeedback
-    )
+    base_llm = get_groq_llm(model = model, api_key = api_key, temperature = 0.0)
+
+    llm = base_llm.with_structured_output(schema = AggregatorFeedback)
     result = llm.invoke(prompt)
 
     if result is None:
