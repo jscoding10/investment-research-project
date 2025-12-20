@@ -1,6 +1,7 @@
 import os
 import dotenv
 from langchain_groq import ChatGroq
+from logger import get_logger
 
 from agents.macro.prompt import macro_research_prompt
 from agents.macro.tools import get_macro_data_tool
@@ -10,27 +11,33 @@ from models.agent import MacroSentimentOutput
 
 dotenv.load_dotenv()
 
+logger = get_logger(__name__)
+
 def get_macro_sentiment() -> str:
     """
     Returns bullish/bearish/neutral view on equities based on latest FRED macro data.
     """
-    prompt = macro_research_prompt
-    tools = [get_macro_data_tool]
+    try:
+        prompt = macro_research_prompt
+        tools = [get_macro_data_tool]
 
-    model_name = LLM_MODELS["groq-llama"] 
+        model_name = LLM_MODELS["groq-llama"] 
 
-    api_key = os.getenv("GROQ_API_KEY_2")
-    if not api_key:
-        raise ValueError(
-            "GROQ_API_KEY not found! "
-            "Make sure you have a .env file with GROQ_API_KEY_2=your_real_key_here"
-        )   
+        api_key = os.getenv("GROQ_API_KEY_2")
+        if not api_key:
+            raise ValueError(
+                "GROQ_API_KEY not found! "
+                "Make sure you have a .env file with GROQ_API_KEY_2=your_real_key_here"
+            )   
 
-    llm = ChatGroq(
-        model = model_name,
-        temperature = 0.0,  
-        groq_api_key = api_key         
-    )
+        llm = ChatGroq(
+            model = model_name,
+            temperature = 0.0,  
+            groq_api_key = api_key         
+        )
 
-    result = run_agent_with_tools(llm, prompt, tools, MacroSentimentOutput)
-    return result
+        result = run_agent_with_tools(llm, prompt, tools, MacroSentimentOutput)
+        return result
+    except Exception as e:
+        logger.error(f"Error in get_macro_sentiment: {e}", exec_info = True)
+        return f"Error executing agent: {str(e)}"
