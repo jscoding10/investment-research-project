@@ -3,11 +3,10 @@ import dotenv
 from datetime import datetime, timedelta
 from logger import get_logger
 
-from agents.shared.llm_models import LLM_MODELS
+from agents.shared.llm_models import LLM_MODELS, get_groq_compound_llm
 from agents.industry.prompt import industry_research_prompt
 
 from langchain_core.messages import HumanMessage
-from langchain_groq import ChatGroq  
 
 dotenv.load_dotenv()
 
@@ -39,12 +38,8 @@ def get_industry_sentiment(ticker: str, industry: str) -> str:
                 "Make sure you have a .env file with GROQ_API_KEY=your_real_key_here"
             )
 
-        llm = ChatGroq(
-            model=model,
-            temperature=0.0,
-            max_tokens=600,  
-            groq_api_key = api_key              
-        )
+
+        llm = get_groq_compound_llm(model = model, api_key = api_key, max_tokens = 600, temperature = 0.0)
         
         result = llm.invoke([HumanMessage(content=prompt)])
         
