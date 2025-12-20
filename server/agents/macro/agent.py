@@ -1,3 +1,4 @@
+import os
 import dotenv
 from langchain_groq import ChatGroq
 
@@ -18,9 +19,17 @@ def get_macro_sentiment() -> str:
 
     model_name = LLM_MODELS["groq-llama"] 
 
+    api_key = os.getenv("GROQ_API_KEY_2")
+    if not api_key:
+        raise ValueError(
+            "GROQ_API_KEY not found! "
+            "Make sure you have a .env file with GROQ_API_KEY_2=your_real_key_here"
+        )   
+
     llm = ChatGroq(
-        model=model_name,
-        temperature=0.0,           
+        model = model_name,
+        temperature = 0.0,  
+        groq_api_key = api_key         
     )
 
     result = run_agent_with_tools(llm, prompt, tools, MacroSentimentOutput)
