@@ -16,7 +16,8 @@
       </p-selectButton>
     </div>
     <!-- Table -->
-    <div class="overflow-hidden rounded-3xl border-2 border-gray-400 bg-white p-5 shadow-xl">
+    <div
+      class="overflow-hidden rounded-3xl border-2 border-gray-400 bg-white p-5 shadow-xl dark:border-gray-500 dark:bg-gray-900">
       @if (selectedInvestment === 'stocks') {
         <app-stock-data-table />
       } @else if (selectedInvestment === 'crypto') {
