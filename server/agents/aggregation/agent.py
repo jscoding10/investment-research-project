@@ -1,3 +1,4 @@
+import os
 import dotenv
 from langchain_groq import ChatGroq
 
@@ -29,7 +30,14 @@ def get_aggregated_sentiment(state: EquityResearchState):
 
     model = LLM_MODELS["groq-llama"]
 
-    llm = ChatGroq(model=model, temperature=0.2)
+    api_key = os.getenv("GROQ_API_KEY_3")
+    if not api_key:
+        raise ValueError(
+            "GROQ_API_KEY not found! "
+            "Make sure you have a .env file with GROQ_API_KEY_3=your_real_key_here"
+            )  
+
+    llm = ChatGroq(model = model, temperature = 0.2, groq_api_key = api_key)
     result = run_agent_with_tools(llm, prompt)
 
     return result

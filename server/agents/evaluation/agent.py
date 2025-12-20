@@ -1,3 +1,4 @@
+import os
 import dotenv
 from langchain_groq import ChatGroq
 
@@ -17,7 +18,13 @@ def evaluate_aggregated_sentement(sentiment: str):
     )
 
     model = LLM_MODELS["groq-llama"]
-    llm = ChatGroq(model=model, temperature=0.0).with_structured_output(
+    api_key = os.getenv("GROQ_API_KEY_3")
+    if not api_key:
+        raise ValueError(
+            "GROQ_API_KEY not found! "
+            "Make sure you have a .env file with GROQ_API_KEY_3=your_real_key_here"
+            )  
+    llm = ChatGroq(model = model, temperature = 0.0, groq_api_key = api_key).with_structured_output(
         schema=AggregatorFeedback
     )
     result = llm.invoke(prompt)

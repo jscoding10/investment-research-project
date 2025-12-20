@@ -1,3 +1,4 @@
+import os
 import dotenv
 from datetime import datetime, timedelta
 from logger import get_logger
@@ -30,10 +31,18 @@ def get_peer_sentiment(ticker: str, business: str) -> str:
 
         model = LLM_MODELS['groq-compound-mini']
 
+        api_key = os.getenv("GROQ_API_KEY_3")
+        if not api_key:
+            raise ValueError(
+                "GROQ_API_KEY not found! "
+                "Make sure you have a .env file with GROQ_API_KEY_3=your_real_key_here"
+            )   
+
         llm = ChatGroq(
             model=model,
             temperature=0.0,
-            max_tokens=600,                  
+            max_tokens=600,     
+            groq_api_key = api_key             
         )
 
         result = llm.invoke([HumanMessage(content=prompt)])
