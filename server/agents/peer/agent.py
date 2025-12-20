@@ -3,10 +3,9 @@ import dotenv
 from datetime import datetime, timedelta
 from logger import get_logger
 
-from langchain_groq import ChatGroq
 from langchain_core.messages import HumanMessage
 
-from agents.shared.llm_models import LLM_MODELS
+from agents.shared.llm_models import LLM_MODELS, get_groq_compound_llm
 from agents.peer.prompt import peer_research_prompt
 
 logger = get_logger(__name__)
@@ -38,12 +37,7 @@ def get_peer_sentiment(ticker: str, business: str) -> str:
                 "Make sure you have a .env file with GROQ_API_KEY_3=your_real_key_here"
             )   
 
-        llm = ChatGroq(
-            model=model,
-            temperature=0.0,
-            max_tokens=600,     
-            groq_api_key = api_key             
-        )
+        llm = get_groq_compound_llm(model = model, api_key = api_key, max_tokens = 600, temperature = 0.0)
 
         result = llm.invoke([HumanMessage(content=prompt)])
 
