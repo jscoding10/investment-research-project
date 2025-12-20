@@ -131,3 +131,5 @@ Thumbs.db
 # !data/filings/.gitkeep
 # data/chroma/*
 # !data/chroma/.gitkeep
+
+static/
