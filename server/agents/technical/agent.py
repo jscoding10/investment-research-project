@@ -18,12 +18,12 @@ def get_technical_sentiment(ticker: str):
     prompt = f"{technical_research_prompt}\n\nAnalyze the technical indicators for ticker: {ticker}"
     tools = [get_technical_analysis_tool]
     model = LLM_MODELS["groq-llama"]
-    groq_api_key = os.getenv("GROQ_API_KEY")
-    if not groq_api_key:
+    api_key = os.getenv("GROQ_API_KEY")
+    if not api_key:
         raise ValueError(
             "GROQ_API_KEY not found! "
             "Make sure you have a .env file with GROQ_API_KEY=your_real_key_here"
         )
-    llm = ChatGroq(model=model, temperature=0.0)
+    llm = ChatGroq(model=model, temperature=0.0, groq_api_key = api_key)
     result = run_agent_with_tools(llm, prompt, tools, TechnicalSentimentOutput)
     return result

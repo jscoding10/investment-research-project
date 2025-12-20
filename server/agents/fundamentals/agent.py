@@ -1,3 +1,5 @@
+
+import os
 from typing import Any, Dict, Optional
 
 import dotenv
@@ -28,9 +30,17 @@ def get_fundamental_sentiment(
     """
     model_name = LLM_MODELS['groq-llama']
 
+    api_key = os.getenv("GROQ_API_KEY")
+    if not api_key:
+        raise ValueError(
+            "GROQ_API_KEY not found! "
+            "Make sure you have a .env file with GROQ_API_KEY=your_real_key_here"
+        )
+
     llm = ChatGroq(
-        model=model_name,
-        temperature=0.0,       
+        model= model_name,
+        temperature= 0.0,
+        groq_api_key = api_key       
     )
 
     if cached_info is not None:
