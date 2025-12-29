@@ -1,4 +1,6 @@
-<p-table [value]="cryptos">
+<p-table
+  [value]="crypto"
+  [loading]="isLoading">
   <ng-template #header>
     <tr class="border-b border-gray-200 text-left text-sm text-gray-600 dark:text-gray-400">
       <th class="px-6 pb-4">Ticker</th>
@@ -8,32 +10,61 @@
       <th class="px-6 pb-4 text-right">Volume</th>
     </tr>
   </ng-template>
-
-  <!-- Body -->
   <ng-template
     #body
-    let-stock>
+    let-crypto>
     <tr class="border-b border-gray-100 last:border-b-0">
       <td class="px-6 py-5 dark:text-gray-400">
-        <span class="font-mono text-lg">{{ stock.ticker }}</span>
+        <span class="font-mono text-lg">{{ crypto.ticker }}</span>
       </td>
-      <td class="px-6 py-5 text-gray-800 dark:text-gray-400">{{ stock.name }}</td>
+      <td class="px-6 py-5 text-gray-800 dark:text-gray-400">{{ crypto.displayName }}</td>
       <td class="px-6 py-5 text-right text-gray-900 dark:text-gray-400">
-        {{ stock.price | currency: stock.currency : 'symbol' : '1.2-2' }}
+        {{ crypto.price | currency: crypto.currency : 'symbol' : '1.2-2' }}
       </td>
       <td class="px-6 py-5 text-right">
         <p-tag
-          [value]="(stock.change_pct | number: '1.2-2') + '%'"
-          [severity]="stock.change_pct >= 0 ? 'success' : 'danger'"
+          [value]="(crypto.change_pct | number: '1.2-2') + '%'"
+          [severity]="crypto.change_pct >= 0 ? 'success' : 'danger'"
           rounded
           class="px-3 py-1.5 text-xs" />
       </td>
       <td class="px-6 py-5 text-right text-gray-600 dark:text-gray-400">
-        {{ stock.volume }}
+        {{ formatVolume(crypto.volume) }}
       </td>
     </tr>
   </ng-template>
-
+  <ng-template pTemplate="loadingbody">
+    @for (_ of [].constructor(6); track $index) {
+      <tr>
+        <td class="px-6 py-5">
+          <p-skeleton
+            width="4rem"
+            height="1.5rem" />
+        </td>
+        <td class="px-6 py-5">
+          <p-skeleton
+            width="10rem"
+            height="1.2rem" />
+        </td>
+        <td class="px-6 py-5 text-right">
+          <p-skeleton
+            width="6rem"
+            height="1.2rem" />
+        </td>
+        <td class="px-6 py-5 text-right">
+          <p-skeleton
+            width="4rem"
+            height="2rem"
+            borderRadius="16px" />
+        </td>
+        <td class="px-6 py-5 text-right">
+          <p-skeleton
+            width="4rem"
+            height="1rem" />
+        </td>
+      </tr>
+    }
+  </ng-template>
   <ng-template pTemplate="emptymessage">
     <tr>
       <td
