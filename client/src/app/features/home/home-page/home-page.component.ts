@@ -91,8 +91,6 @@ export class HomePageComponent implements OnInit, OnDestroy {
       return;
     }
 
-    console.log('Form submitted successfully:', this.homepageForm.getRawValue());
-
     if (this.homepageForm.get('investmentType')?.value === 'stock') {
       this.router.navigate(['stock-equity-research']);
     }
