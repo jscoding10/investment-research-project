@@ -96,7 +96,6 @@ export class StockEquityResearchFormComponent implements OnInit {
     const request = this.stockEquityResearchForm.getRawValue() as StockRequest;
     this.stockResearchService.generateReport(request);
 
-    console.log('Form submitted successfully:', this.stockEquityResearchForm.getRawValue());
     this.stockEquityResearchForm.reset();
   }
 
