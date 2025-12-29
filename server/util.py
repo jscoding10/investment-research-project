@@ -217,9 +217,11 @@ def format_sentiment_output(output: BaseModel) -> str:
 
     # Get the main sentiment/valuation field
     if "sentiment" in data:
-        lines.append(f"[{data['sentiment']}]")
+        sentiment_value = data['sentiment'].value if hasattr(data['sentiment'], 'value') else data['sentiment']
+        lines.append(f"**{sentiment_value}**")
     elif "valuation" in data:
-        lines.append(f"[{data['valuation']}]")
+        valuation_value = data['valuation'].value if hasattr(data['valuation'], 'value') else data['valuation']
+        lines.append(f"**{valuation_value}**")
 
     lines.append("")
 
@@ -256,7 +258,12 @@ def format_sentiment_output(output: BaseModel) -> str:
     #     lines.append(risk_summary)
 
     lines.append("")
-    lines.append(f"Confidence: {data.get('confidence', 'N/A')}")
+
+    # Format confidence
+    if "confidence" in data:
+        confidence_value = data['confidence'].value if hasattr(data['confidence'], 'value') else data['confidence']
+        lines.append("")
+        lines.append(f"**Confidence:** {confidence_value}")
 
     return "\n".join(lines)
 
