@@ -155,6 +155,78 @@ async def get_portfolio_prices():
         "source": "yfinance (bulk + fast_info)"
     }
 
+# Crypto table endpoint
+# Tickers are in Yahoo Finance format: SYMBOL-USD
+TOP_CRYPTO = [
+    "BTC-USD",   # Bitcoin
+    "ETH-USD",   # Ethereum
+    "BNB-USD",   # BNB
+    "SOL-USD",   # Solana
+    "XRP-USD",   # XRP
+    "ADA-USD",   # Cardano
+    "TRX-USD"    # TRON (often in top 10)
+]
+
+@api.get("/crypto-table-prices")
+async def get_crypto_prices():
+    """
+    Fast crypto price table using yfinance bulk download
+    Optimized: single bulk request for all prices + parallel threads
+    """
+    import yfinance as yf
+    from datetime import datetime
+
+    # Step 1: Bulk download recent data (2 days to ensure previous close even on weekends/holidays)
+    data = yf.download(
+        tickers=" ".join(TOP_CRYPTO),
+        period="2d",
+        interval="5m",        # Higher resolution for more recent data points (crypto is 24/7)
+        group_by="ticker",
+        auto_adjust=True,
+        threads=True,         # Parallel downloads – big speed boost
+        progress=False
+    )
+
+    results = []
+    failed = []
+
+    for symbol in TOP_CRYPTO:
+        try:
+            ticker_data = data[symbol] if len(TOP_CRYPTO) > 1 else data
+
+            if ticker_data.empty or "Close" not in ticker_data.columns:
+                failed.append(symbol)
+                continue
+
+            close = ticker_data["Close"]
+            latest = close.iloc[-1]
+            previous = close.iloc[-2] if len(close) > 1 else latest  # Fallback if only one data point
+
+            # 24h change % (crypto typically uses previous day close - here use latest vs previous point)
+            change_pct = round((latest / previous - 1) * 100, 2) if previous != 0 else 0
+
+            # Fast info (much quicker than full .info)
+            t = yf.Ticker(symbol)
+            info = t.info
+
+            results.append({
+                "ticker": symbol.replace("-USD", ""),
+                "name": info.get("longName") or info.get("shortName", symbol),
+                "price": round(float(latest), 6 if "USDT" in symbol or "USDC" in symbol else 2),  # More decimals for non-stablecoins
+                "change_pct": change_pct,
+                "volume": int(ticker_data["Volume"].iloc[-1]) if "Volume" in ticker_data.columns else 0,
+                "currency": info.get("currency", "USD")
+            })
+        except Exception:
+            failed.append(symbol)
+
+    return {
+        "data": results,
+        "failed": failed,
+        "updated": datetime.utcnow().isoformat() + "Z",
+        "source": "yfinance (Yahoo Finance crypto data - bulk download + fast_info)"
+    }
+
 @api.get("/debug/industry")
 async def debug_industry(ticker: str = "NVDA", industry: str = "Semiconductors"):
     from agents.industry.agent import get_industry_sentiment
