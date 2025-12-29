@@ -97,7 +97,7 @@ async def research_equity(request: Request, req: EquityResearchRequest):
     }
 
 # Stock table endpoint
-MAG7_AND_ETFS = ["AAPL", "MSFT", "GOOGL", "AMZN", "NVDA", "META", "TSLA"]
+MAG7 = ["AAPL", "MSFT", "GOOGL", "AMZN", "NVDA", "META", "TSLA"]
 
 @api.get("/stock-table-prices")
 async def get_portfolio_prices():
@@ -107,7 +107,7 @@ async def get_portfolio_prices():
     """
     # Step 1: Download ALL price data in ONE request (this is the killer optimization)
     data = yf.download(
-        tickers=" ".join(MAG7_AND_ETFS),
+        tickers=" ".join(MAG7),
         period="2d",
         interval="1m",        # gives latest price even in pre-market
         group_by="ticker",
@@ -119,9 +119,9 @@ async def get_portfolio_prices():
     results = []
     failed = []
 
-    for symbol in MAG7_AND_ETFS:
+    for symbol in MAG7:
         try:
-            ticker_data = data[symbol] if len(MAG7_AND_ETFS) > 1 else data
+            ticker_data = data[symbol] if len(MAG7) > 1 else data
 
             if ticker_data.empty or "Close" not in ticker_data.columns:
                 failed.append(symbol)
