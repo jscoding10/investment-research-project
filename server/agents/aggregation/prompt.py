@@ -36,11 +36,11 @@ research_aggregation_prompt = """
     - Peer: [key takeaways]
     - News: [key takeaways]
 
-    Consensus and Divergence:
+    **Consensus and Divergence:**
     - Consensus: [content]  
     - Divergence: [content]
 
-    Weighting of Perspectives:
+    **Weighting of Perspectives:**
     - Fundamental [percentage and explanation]
     - Industry [percentage and explanation]
     - Peer [percentage and explanation] 

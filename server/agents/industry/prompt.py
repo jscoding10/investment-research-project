@@ -16,9 +16,9 @@ industry_research_prompt = """
 
     Return exactly in this Markdown format:
 
-    [BULLISH/BEARISH/NEUTRAL]
+    **BULLISH/BEARISH/NEUTRAL**
     * [Key sector trend or competitive shift with metric] [Source, YYYY-MM-DD]
     * [Major tailwind or headwind + impact on {ticker}] [Source, YYYY-MM-DD]
     * [High-impact insight or emerging pattern] [Source, YYYY-MM-DD]
 
-    Confidence: [High/Medium/Low]"""
+    **Confidence:** High/Medium/Low"""

@@ -11,10 +11,10 @@ news_research_prompt = """
 
     Return exactly in this Markdown format:
 
-    [BULLISH/BEARISH/NEUTRAL]
+    **BULLISH/BEARISH/NEUTRAL**
     * [Key event or headline with key metric] [Source, YYYY-MM-DD]
     * [Key event or headline with key metric] [Source, YYYY-MM-DD]
     * [Key event or headline with key metric] [Source, YYYY-MM-DD]
 
-    Confidence: [High/Medium/Low]"""
+    **Confidence:** High/Medium/Low"""
 

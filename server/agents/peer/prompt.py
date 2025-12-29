@@ -18,12 +18,12 @@ peer_research_prompt = """
 
     Return EXACTLY in this Markdown format — NO extra sections, NO multiple sentiments, NO additional bullets or text:
 
-    [POSITIVE/NEGATIVE/NEUTRAL] (relative to peers)
+    **POSITIVE/NEGATIVE/NEUTRAL** (relative to peers)
 
     * [Key competitor or valuation comparison with specific metric] [Source, YYYY-MM-DD]
     * [Major performance or operational insight + impact on {business}] [Source, YYYY-MM-DD]
     * [High-impact moat, risk, or trend] [Source, YYYY-MM-DD]
 
-    Confidence: [High/Medium/Low]
+    **Confidence:** High/Medium/Low
     Keep under 250 words.
 """
