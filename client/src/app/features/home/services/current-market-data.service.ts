@@ -19,6 +19,23 @@ interface StockDataResponse {
   source: string;
 }
 
+export interface CryptoData {
+  ticker: string;
+  name: string;
+  price: number;
+  change_pct: number;
+  volume: number;
+  currency: string;
+  displayName?: string;
+}
+
+interface CryptoDataResponse {
+  data: CryptoData[];
+  failed: string[];
+  updated: string;
+  source: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -28,5 +45,9 @@ export class CurrentMarketDataService {
 
   getCurrentStockData(): Observable<StockDataResponse> {
     return this.httpClient.get<StockDataResponse>(`${this.baseUrl}/stock-table-prices`);
+  }
+
+  getCurrentCryptoData(): Observable<CryptoDataResponse> {
+    return this.httpClient.get<CryptoDataResponse>(`${this.baseUrl}/crypto-table-prices`);
   }
 }
