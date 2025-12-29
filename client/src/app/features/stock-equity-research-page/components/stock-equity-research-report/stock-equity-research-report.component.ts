@@ -60,58 +60,6 @@ export class StockEquityResearchReportComponent {
     return 'NEUTRAL';
   }
 
-  // // Convert Markdown
-  // private mdToContent(md: string): Content[] {
-  //   const lines = md.split('\n');
-  //   const content: Content[] = [];
-  //   let currentParagraph: (string | { text: string; bold: true })[] = [];
-
-  //   const formatParagraph = () => {
-  //     if (currentParagraph.length > 0) {
-  //       content.push({ text: currentParagraph, margin: [0, 6, 0, 6] });
-  //       currentParagraph = [];
-  //     }
-  //   };
-
-  //   for (const line of lines) {
-  //     const trimmed = line.trim();
-
-  //     if (trimmed === '') {
-  //       formatParagraph();
-  //       continue;
-  //     }
-
-  //     if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
-  //       formatParagraph();
-  //       const bulletText = trimmed.slice(2);
-  //       const parts = bulletText.split(/\*\*(.+?)\*\*/g);
-  //       const inline: (string | { text: string; bold: true })[] = [];
-  //       for (let i = 0; i < parts.length; i++) {
-  //         if (i % 2 === 0) {
-  //           if (parts[i]) inline.push(parts[i]);
-  //         } else {
-  //           inline.push({ text: parts[i], bold: true });
-  //         }
-  //       }
-  //       content.push({ text: inline, margin: [10, 2, 0, 2] });
-  //     } else {
-  //       // Accumulate paragraph lines
-  //       const parts = line.split(/\*\*(.+?)\*\*/g);
-  //       for (let i = 0; i < parts.length; i++) {
-  //         if (i % 2 === 0) {
-  //           if (parts[i]) currentParagraph.push(parts[i]);
-  //         } else {
-  //           currentParagraph.push({ text: parts[i], bold: true });
-  //         }
-  //       }
-  //       currentParagraph.push(' '); // Preserve spacing
-  //     }
-  //   }
-
-  //   formatParagraph();
-  //   return content;
-  // }
-
   private normalizeMarkdown(md: string): string {
     if (!md) return '';
 
@@ -144,8 +92,6 @@ export class StockEquityResearchReportComponent {
     const cleaned = this.normalizeMarkdown(md);
     const tree = this.getParser().parse(cleaned);
 
-    const content: Content[] = [];
-
     const visit = (node: any): Content | Content[] | undefined => {
       switch (node.type) {
         case 'root':
@@ -170,7 +116,7 @@ export class StockEquityResearchReportComponent {
               alignment: 'justify',
             };
           }
-          return undefined; // Explicit return for empty paragraph
+          return undefined;
         }
 
         case 'heading': {
@@ -179,7 +125,6 @@ export class StockEquityResearchReportComponent {
           const fontSize = level === 1 ? 20 : level === 2 ? 18 : 16;
 
           if (text) {
-            // Guard against empty headings
             return {
               text,
               style: 'sectionHeader',
@@ -188,7 +133,7 @@ export class StockEquityResearchReportComponent {
               alignment: 'left',
             };
           }
-          return undefined; // Explicit return for empty heading
+          return undefined;
         }
 
         case 'list': {
@@ -231,7 +176,7 @@ export class StockEquityResearchReportComponent {
           if (node.value) {
             return { text: node.value, margin: [0, 8, 0, 8] };
           }
-          return undefined; // Explicit return for unmatched defaults
+          return undefined;
       }
     };
 
@@ -244,7 +189,6 @@ export class StockEquityResearchReportComponent {
       const pdfMakeLib = await import('pdfmake/build/pdfmake');
       this.pdfMakeInstance = pdfMakeLib.default;
 
-      // Set Inter font via CDN TTF URLs (matches your Google Fonts; fixes VFS errors)
       this.pdfMakeInstance.fonts = {
         Inter: {
           normal: 'https://unpkg.com/@fontsource/inter@5.0.20/files/inter-latin-400-normal.woff',
@@ -256,24 +200,6 @@ export class StockEquityResearchReportComponent {
     }
     return this.pdfMakeInstance;
   }
-
-  // private async loadPdfMake(): Promise<any> {
-  //   if (!this.pdfMakeInstance) {
-  //     const pdfMakeModule = await import('pdfmake/build/pdfmake');
-  //     this.pdfMakeInstance = pdfMakeModule; // namespace import
-
-  //     // Use reliable Roboto fonts from official pdfmake CDN
-  //     this.pdfMakeInstance.fonts = {
-  //       Roboto: {
-  //         normal: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/fonts/Roboto/Roboto-Regular.ttf',
-  //         bold: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/fonts/Roboto/Roboto-Medium.ttf',
-  //         italics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/fonts/Roboto/Roboto-Italic.ttf',
-  //         bolditalics: 'https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/fonts/Roboto/Roboto-MediumItalic.ttf',
-  //       },
-  //     };
-  //   }
-  //   return this.pdfMakeInstance;
-  // }
 
   async exportToPDF() {
     if (!this.report()) return;
@@ -287,7 +213,7 @@ export class StockEquityResearchReportComponent {
       pageSize: 'A4',
       pageMargins: [40, 60, 40, 60],
       defaultStyle: {
-        font: 'Inter', // Use your Inter font
+        font: 'Inter',
         fontSize: 12,
         color: '#000000',
       },
@@ -299,21 +225,16 @@ export class StockEquityResearchReportComponent {
               text: `${data.ticker.toUpperCase()} Equity Research Report`,
               style: 'ticker',
             },
-            // { text: sentiment, style: 'sentiment', alignment: 'center' },
-            // { text: 'Equity Research Report', style: 'subheader', alignment: 'center' },
           ],
           margin: [0, 0, 0, 10],
         },
 
-        // { text: 'Overall Conclusion', style: 'sectionHeader', fontSize: 16 },
         ...this.mdToContent(data.combined_sentiment),
 
         { text: '', pageBreak: 'after', margin: [0, 0, 0, 0] },
 
-        // Full-width sections (no columns/cards)
         { text: 'Fundamental', style: 'sectionHeader' },
         { stack: this.mdToContent(data.sentiment_analysis.fundamental), style: 'sentimentText' },
-        // ...this.mdToContent(data.sentiment_analysis.fundamental),
 
         { text: 'Technical', style: 'sectionHeader' },
         { stack: this.mdToContent(data.sentiment_analysis.technical), style: 'sentimentText' },
@@ -346,145 +267,3 @@ export class StockEquityResearchReportComponent {
     });
   }
 }
-
-// pdfMake.createPdf(docDefinition).download(`${this.ticker().toUpperCase()}_Equity_Research_Report.pdf`);
-// Convert Markdown with inline bold handling
-//   private mdToContent(md: string): Content[] {
-//     const lines = md.split('\n');
-//     const content: Content[] = [];
-//     let currentParagraph = '';
-
-//     const parseInlineBold = (text: string): (string | { text: string; bold: boolean })[] => {
-//       const parts = text.split(/\*\*(.+?)\*\*/g); // Non-greedy match for inline bold
-//       const spans: (string | { text: string; bold: boolean })[] = [];
-//       for (let i = 0; i < parts.length; i++) {
-//         if (i % 2 === 0) {
-//           if (parts[i].trim()) spans.push(parts[i]);
-//         } else {
-//           spans.push({ text: parts[i], bold: true });
-//         }
-//       }
-//       return spans;
-//     };
-
-//     for (const line of lines) {
-//       const trimmed = line.trim();
-
-//       if (trimmed === '') {
-//         if (currentParagraph) {
-//           content.push({ text: parseInlineBold(currentParagraph.trim()), margin: [0, 6, 0, 6] });
-//           currentParagraph = '';
-//         }
-//       } else if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
-//         if (currentParagraph) {
-//           content.push({ text: parseInlineBold(currentParagraph.trim()), margin: [0, 6, 0, 6] });
-//           currentParagraph = '';
-//         }
-//         content.push({ text: parseInlineBold(trimmed.slice(2)), margin: [10, 2, 0, 2] });
-//       } else if (trimmed.startsWith('# ')) {
-//         if (currentParagraph) {
-//           content.push({ text: parseInlineBold(currentParagraph.trim()), margin: [0, 6, 0, 6] });
-//           currentParagraph = '';
-//         }
-//         content.push({ text: trimmed.slice(2), style: 'header', margin: [0, 10, 0, 5] });
-//       } else {
-//         currentParagraph += ' ' + line; // Preserve original spacing
-//       }
-//     }
-
-//     if (currentParagraph) {
-//       content.push({ text: parseInlineBold(currentParagraph.trim()), margin: [0, 6, 0, 6] });
-//     }
-
-//     return content;
-//   }
-
-//   private async loadPdfMake() {
-//     if (!this.pdfMakeInstance) {
-//       const pdfMakeModule = await import('pdfmake/build/pdfmake');
-//       this.pdfMakeInstance = pdfMakeModule;
-
-//       // Set Inter font via CDN TTF URLs (matches your Google Fonts; fixes VFS errors)
-//       this.pdfMakeInstance.fonts = {
-//         Inter: {
-//           normal: 'https://unpkg.com/@fontsource/inter@5.0.20/files/inter-latin-400-normal.ttf',
-//           bold: 'https://unpkg.com/@fontsource/inter@5.0.20/files/inter-latin-700-normal.ttf',
-//           italics: 'https://unpkg.com/@fontsource/inter@5.0.20/files/inter-latin-400-italic.ttf',
-//           bolditalics: 'https://unpkg.com/@fontsource/inter@5.0.20/files/inter-latin-700-italic.ttf',
-//         },
-//       };
-//     }
-//     return this.pdfMakeInstance;
-//   }
-
-//   async exportToPDF() {
-//     if (!this.report()) return;
-
-//     const pdfMake = await this.loadPdfMake();
-//     const data = this.report()!;
-
-//     const sentiment = this.getOverallSentiment(data);
-
-//     const docDefinition: TDocumentDefinitions = {
-//       pageSize: 'A4',
-//       pageMargins: [40, 60, 40, 60],
-//       defaultStyle: {
-//         font: 'Inter', // Use your Inter font
-//         fontSize: 12,
-//         color: '#000000',
-//       },
-
-//       content: [
-//         // Centered header stack
-//         {
-//           stack: [
-//             { text: data.ticker.toUpperCase(), style: 'ticker', alignment: 'center' },
-//             { text: sentiment, style: 'sentiment', alignment: 'center' },
-//             { text: 'Equity Research Report', style: 'subheader', alignment: 'center' },
-//           ],
-//           margin: [0, 0, 0, 40],
-//         },
-
-//         { text: 'Overall Conclusion', style: 'sectionHeader' },
-//         ...this.mdToContent(data.combined_sentiment),
-
-//         { text: '', pageBreak: 'after', margin: [0, 20, 0, 0] },
-
-//         // Full-width sections
-//         { text: 'Fundamental', style: 'cardHeader' },
-//         ...this.mdToContent(data.sentiment_analysis.fundamental),
-
-//         { text: 'Technical', style: 'cardHeader', margin: [0, 20, 0, 8] },
-//         ...this.mdToContent(data.sentiment_analysis.technical),
-
-//         { text: 'Peer Comparison', style: 'cardHeader', margin: [0, 20, 0, 8] },
-//         ...this.mdToContent(data.sentiment_analysis.peer),
-
-//         { text: 'Industry', style: 'cardHeader', margin: [0, 20, 0, 8] },
-//         ...this.mdToContent(data.sentiment_analysis.industry),
-
-//         { text: 'News & Sentiment', style: 'cardHeader', margin: [0, 20, 0, 8] },
-//         ...this.mdToContent(data.sentiment_analysis.news),
-
-//         { text: 'Macro Factors', style: 'cardHeader', margin: [0, 20, 0, 8] },
-//         ...this.mdToContent(data.sentiment_analysis.macro),
-//       ],
-
-//       styles: {
-//         ticker: { fontSize: 36, bold: true, color: '#000000' },
-//         sentiment: { fontSize: 20, bold: true, color: '#000000', padding: 8 }, // Black, no background
-//         subheader: { fontSize: 18, italics: true, color: '#000000', margin: [0, 10, 0, 0] },
-//         sectionHeader: { fontSize: 24, bold: true, color: '#000000', margin: [0, 20, 0, 10] },
-//         cardHeader: { fontSize: 18, bold: true, color: '#000000', margin: [0, 20, 0, 8] },
-//         header: { fontSize: 16, bold: true, color: '#000000' }, // For inline # headings if any
-//       } as StyleDictionary,
-//     };
-
-//     const pdfDocGenerator = pdfMake.createPdf(docDefinition);
-//     pdfDocGenerator.getBlob((blob: Blob) => {
-//       const url = URL.createObjectURL(blob);
-//       window.open(url, '_blank');
-//       setTimeout(() => URL.revokeObjectURL(url), 10000);
-//     });
-//   }
-// }
