@@ -63,42 +63,76 @@
       </div>
       <!-- Cards -->
       <div class="mx-auto max-w-7xl">
-        <div class="grid gap-6 lg:grid-cols-3">
-          <div class="rounded-2xl border border-white/10 bg-white/5 p-6 transition hover:border-lime-500/50">
-            <h3 class="mb-4 text-xl font-bold text-lime-400">Fundamental</h3>
+        <div class="grid gap-6 lg:grid-cols-3 lg:gap-8">
+          <div
+            class="rounded-2xl border border-white/10 bg-white/5 p-6 transition hover:border-lime-500/50 active:scale-[0.98] active:border-lime-400 lg:active:scale-100">
+            <h3 class="mb-4 flex items-center gap-3 text-xl font-bold text-lime-400">
+              <span class="material-symbols-outlined text-2xl">account_balance</span>
+              Fundamental
+            </h3>
             <markdown
               [data]="data.sentiment_analysis.fundamental"
-              class="prose prose-invert prose-sm break-words" />
+              class="prose prose-invert prose-sm sentiment-card break-words" />
           </div>
-          <div class="rounded-2xl border border-white/10 bg-white/5 p-6 transition hover:border-lime-500/50">
-            <h3 class="mb-4 text-xl font-bold text-lime-400">Technical</h3>
+
+          <!-- Technical -->
+          <div
+            class="rounded-2xl border border-white/10 bg-white/5 p-6 transition hover:border-lime-500/50 active:scale-[0.98] active:border-lime-400 lg:active:scale-100">
+            <h3 class="mb-4 flex items-center gap-3 text-xl font-bold text-lime-400">
+              <span class="material-symbols-outlined text-2xl">trending_up</span>
+              Technical
+            </h3>
             <markdown
               [data]="data.sentiment_analysis.technical"
-              class="prose prose-invert prose-sm break-words" />
+              class="prose prose-invert prose-sm sentiment-card break-words" />
           </div>
-          <div class="rounded-2xl border border-white/10 bg-white/5 p-6 transition hover:border-lime-500/50">
-            <h3 class="mb-4 text-xl font-bold text-lime-400">Peer Comparison</h3>
+
+          <!-- Peer Comparison -->
+          <div
+            class="rounded-2xl border border-white/10 bg-white/5 p-6 transition hover:border-lime-500/50 active:scale-[0.98] active:border-lime-400 lg:active:scale-100">
+            <h3 class="mb-4 flex items-center gap-3 text-xl font-bold text-lime-400">
+              <span class="material-symbols-outlined text-2xl">compare_arrows</span>
+              Peer Comparison
+            </h3>
             <markdown
               [data]="data.sentiment_analysis.peer"
-              class="prose prose-invert prose-sm break-words" />
+              class="prose prose-invert prose-sm sentiment-card break-words" />
           </div>
-          <div class="rounded-2xl border border-white/10 bg-white/5 p-6 transition hover:border-lime-500/50">
-            <h3 class="mb-4 text-xl font-bold text-lime-400">Industry</h3>
+
+          <!-- Industry -->
+          <div
+            class="rounded-2xl border border-white/10 bg-white/5 p-6 transition hover:border-lime-500/50 active:scale-[0.98] active:border-lime-400 lg:active:scale-100">
+            <h3 class="mb-4 flex items-center gap-3 text-xl font-bold text-lime-400">
+              <span class="material-symbols-outlined text-2xl">apartment</span>
+              Industry
+            </h3>
             <markdown
               [data]="data.sentiment_analysis.industry"
-              class="prose prose-invert prose-sm break-words" />
+              class="prose prose-invert prose-sm sentiment-card break-words" />
           </div>
-          <div class="rounded-2xl border border-white/10 bg-white/5 p-6 transition hover:border-lime-500/50">
-            <h3 class="mb-4 text-xl font-bold text-lime-400">News & Sentiment</h3>
+
+          <!-- News & Sentiment -->
+          <div
+            class="rounded-2xl border border-white/10 bg-white/5 p-6 transition hover:border-lime-500/50 active:scale-[0.98] active:border-lime-400 lg:active:scale-100">
+            <h3 class="mb-4 flex items-center gap-3 text-xl font-bold text-lime-400">
+              <span class="material-symbols-outlined text-2xl">newspaper</span>
+              News & Sentiment
+            </h3>
             <markdown
               [data]="data.sentiment_analysis.news"
-              class="prose prose-invert prose-sm break-words" />
+              class="prose prose-invert prose-sm sentiment-card break-words" />
           </div>
-          <div class="rounded-2xl border border-white/10 bg-white/5 p-6 transition hover:border-lime-500/50">
-            <h3 class="mb-4 text-xl font-bold text-lime-400">Macro Factors</h3>
+
+          <!-- Macro Factors -->
+          <div
+            class="rounded-2xl border border-white/10 bg-white/5 p-6 transition hover:border-lime-500/50 active:scale-[0.98] active:border-lime-400 lg:active:scale-100">
+            <h3 class="mb-4 flex items-center gap-3 text-xl font-bold text-lime-400">
+              <span class="material-symbols-outlined text-2xl">public</span>
+              Macro Factors
+            </h3>
             <markdown
               [data]="data.sentiment_analysis.macro"
-              class="prose prose-invert prose-sm break-words" />
+              class="prose prose-invert prose-sm sentiment-card break-words" />
           </div>
         </div>
       </div>
