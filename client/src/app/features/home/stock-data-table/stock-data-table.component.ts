@@ -1,5 +1,5 @@
 // Angular
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 // PrimeNg
@@ -17,7 +17,7 @@ import { Subject, takeUntil } from 'rxjs';
   templateUrl: './stock-data-table.component.html',
   styleUrl: './stock-data-table.component.css',
 })
-export class StockDataTableComponent {
+export class StockDataTableComponent implements OnInit {
   stocks: StockData[] = [];
   isLoading = true;
 
