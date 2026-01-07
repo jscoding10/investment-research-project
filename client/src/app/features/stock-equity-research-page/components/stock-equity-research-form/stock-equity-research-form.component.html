@@ -15,14 +15,35 @@
               class="mb-2 block text-sm font-medium opacity-80">
               Stock Ticker
             </label>
-            <input
-              pInputText
+            <p-autoComplete
               id="ticker"
               formControlName="ticker"
+              [suggestions]="stockSuggestions"
+              (completeMethod)="search($event)"
+              optionLabel="symbol"
+              optionValue="symbol"
+              styleClass="w-full"
+              inputStyleClass="w-full rounded-xl {{ isFieldInvalid('ticker') ? 'border-red-500' : '' }}"
               placeholder="e.g. NVDA"
-              [invalid]="isFieldInvalid('ticker')"
-              class="w-full rounded-xl"
-              [class.border-red-500]="isFieldInvalid('ticker')" />
+              [forceSelection]="true"
+              emptyMessage="No matching tickers found">
+              <!-- Dropdown suggestions -->
+              <ng-template
+                let-item
+                pTemplate="item">
+                <div class="flex items-center py-1">
+                  <span class="font-medium">{{ item.symbol }}</span>
+                  <span class="ml-3 text-sm opacity-70">{{ item.name }}</span>
+                </div>
+              </ng-template>
+              <!-- Selected item -->
+              <ng-template
+                let-item
+                pTemplate="selectedItem">
+                <div class="font-medium">{{ item }}</div>
+              </ng-template>
+            </p-autoComplete>
+
             @if (isFieldInvalid('ticker')) {
               <small class="mt-1 text-sm text-red-400">Ticker is required</small>
             }
