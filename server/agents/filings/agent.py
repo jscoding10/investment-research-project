@@ -9,7 +9,7 @@ from agents.filings.tools import search_filings, FilingSearchResult
 from agents.shared.llm_models import LLM_MODELS, get_openai_llm
 from data.util.ingest_sec_filings import ingest_ticker_filings
 from data.util.vector_store import collection_exists, get_collection_stats
-from logger import get_logger
+from util.logger import get_logger
 from models.agent import FilingsSentimentOutput
 
 dotenv.load_dotenv()

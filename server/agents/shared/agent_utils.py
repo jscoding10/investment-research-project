@@ -3,7 +3,7 @@ from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_core.tools import BaseTool
 from pydantic import BaseModel
 
-from logger import get_logger
+from util.logger import get_logger
 
 logger = get_logger(__name__)
 

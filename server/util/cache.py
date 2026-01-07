@@ -1,13 +1,9 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import Any, Dict, Optional
 
 from langgraph.types import CachePolicy
-import yfinance as yf
-from pydantic import BaseModel
 
-from logger import get_logger
-
-from models.state import EquityResearchState
+from util.logger import get_logger
 
 logger = get_logger(__name__)
 
@@ -164,7 +160,7 @@ def create_fundamentals_cache_policy() -> CachePolicy:
 
         return get_fundamentals_ttl(ticker_info)
 
-    # Use shorter TTL since we'll dynamically adjust via key changes
+    # Use shorter TTL since dynamically adjust via key changes
     return CachePolicy(key_func=key_func, ttl=TTL_LONG)
 
 
@@ -209,97 +205,3 @@ def create_macro_cache_policy() -> CachePolicy:
         return f"macro:{date_bucket}".encode()
 
     return CachePolicy(key_func=key_func, ttl=TTL_VERY_LONG)
-
-def format_sentiment_output(output: BaseModel) -> str:
-    """Format a sentiment output model as readable text."""
-    lines = []
-    data = output.model_dump()
-
-    # Get the main sentiment/valuation field
-    if "sentiment" in data:
-        sentiment_value = data['sentiment'].value if hasattr(data['sentiment'], 'value') else data['sentiment']
-        lines.append(f"**{sentiment_value}**")
-    elif "valuation" in data:
-        valuation_value = data['valuation'].value if hasattr(data['valuation'], 'value') else data['valuation']
-        lines.append(f"**{valuation_value}**")
-
-    lines.append("")
-
-    # Format key points (standard agents)
-    for kp in data.get("key_points", []):
-        if isinstance(kp, dict):
-            # KeyPointWithCitation
-            lines.append(f"* {kp['point']} [{kp['source']}, {kp['date']}]")
-        else:
-            # Simple string key point
-            lines.append(f"* {kp}")
-
-    #  # Format key findings (filings agent)
-    # for finding in data.get("key_findings", []):
-    #     lines.append(f"* {finding}")
-
-    # # Format citations (filings agent)
-    # citations = data.get("citations", [])
-    # if citations:
-    #     lines.append("")
-    #     lines.append("**Sources:**")
-    #     for cite in citations:
-    #         if isinstance(cite, dict):
-    #             lines.append(
-    #                 f"  - \"{cite.get('quote', '')}\" "
-    #                 f"[{cite.get('filing_type', '')} {cite.get('section', '')}, {cite.get('filing_date', '')}]"
-    #             )
-
-    # # Format risk factors summary (filings agent)
-    # risk_summary = data.get("risk_factors_summary")
-    # if risk_summary:
-    #     lines.append("")
-    #     lines.append("**Risk Factors:**")
-    #     lines.append(risk_summary)
-
-    lines.append("")
-
-    # Format confidence
-    if "confidence" in data:
-        confidence_value = data['confidence'].value if hasattr(data['confidence'], 'value') else data['confidence']
-        lines.append("")
-        lines.append(f"**Confidence:** {confidence_value}")
-
-    return "\n".join(lines)
-
-def validate_ticker(ticker: str, state: EquityResearchState) -> dict:
-    try:
-        yf_ticker = yf.Ticker(state.ticker)
-        # Check if ticker has valid info by attempting to access basic info
-        info = yf_ticker.info
-        # A valid ticker should have at least some basic info like symbol or regularMarketPrice
-        is_ticker = bool("longName" in info and info["longName"] is not None)
-
-        if is_ticker:
-            industry = info.get("industry")
-            business = info.get("longName")
-            # Cache the full info dict to avoid duplicate yfinance API calls
-            return {
-                "is_ticker_valid": True,
-                "industry": industry,
-                "business": business,
-                "ticker_info": info,
-            }
-        
-        else:
-            return {"is_ticker_valid": False}
-    except Exception as e:
-        logger.warning(f"Ticker validation failed for {ticker}: {e}")
-        return {"is_ticker_valid": False}
-    
-
-def draw_architecture(graph_workflow):
-    try:
-        png_data = graph_workflow.get_graph().draw_mermaid_png()
-        with open("architecture.png", "wb") as f:
-            f.write(png_data)
-    except Exception as e:
-        print(f"Error generating architecture.png: {e}")
-        # Fallback to writing mermaid text
-        with open("architecture.mmd", "w") as f:
-            f.write(graph_workflow.get_graph().draw_mermaid())

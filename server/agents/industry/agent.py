@@ -1,7 +1,7 @@
 import os
 import dotenv
 from datetime import datetime, timedelta
-from logger import get_logger
+from util.logger import get_logger
 
 from agents.shared.llm_models import LLM_MODELS, get_groq_compound_llm
 from agents.industry.prompt import industry_research_prompt

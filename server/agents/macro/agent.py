@@ -1,6 +1,6 @@
 import os
 import dotenv
-from logger import get_logger
+from util.logger import get_logger
 
 from agents.macro.prompt import macro_research_prompt
 from agents.macro.tools import get_macro_data_tool
