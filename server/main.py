@@ -68,7 +68,7 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 # curl -X GET http://localhost:8000/research-equity -H "Content-Type: application/json" -d "{\"ticker\": \"NVDA\"}" | python -m json.tool
 # curl -X POST http://localhost:8000/research-equity -H "Content-Type: application/json" -d '{"ticker":"NVDA","trade_duration":"swing_trade","trade_direction":"long"}'
 
-# Stock equity research endpoint - used to be app
+# Stock equity research endpoint 
 @api.post("/research-equity")
 @limiter.limit("10/minute")
 async def research_equity(request: Request, req: EquityResearchRequest):  
@@ -95,6 +95,60 @@ async def research_equity(request: Request, req: EquityResearchRequest):
         },
         "combined_sentiment": res.combined_sentiment,
     }
+
+# Ticker search endpoint for autocomplete 
+@api.get("/ticker-search")
+async def ticker_search(q: str = ""):
+    query = q.strip().upper() if q else ""
+    
+    if not query: 
+        return []
+
+    results = []
+    seen = set()
+
+    try:
+        # Exact match search for short ticker names
+        ticker = yf.Ticker(query)
+        info = ticker.info
+        name = info.get("longName") or info.get("shortName") or query
+        
+        if name and name.lower() != query.lower():  # Valid company name found
+            results.append({"symbol": query, "name": name})
+            seen.add(query)
+
+        # Partial prefix search when 3 to 5 characters
+        if 3 <= len(query) <= 5:
+            search_data = yf.utils.get_json(
+                f"https://query2.finance.yahoo.com/v1/finance/search?q={query}&quotesCount=10&newsCount=0"
+            )
+
+            for item in search_data.get("quotes", [])[:10]:
+                if item.get("typeDisp") not in ["Equity", "ETF"]:
+                    continue
+                    
+                symbol = item.get("symbol", "").split(".")[0].upper()
+                if symbol in seen or not symbol.startswith(query):
+                    continue
+                    
+                seen.add(symbol)
+
+                # Try to extract name from search result
+                name = item.get("longname") or item.get("shortname") or symbol
+                if name == symbol:
+                    try:
+                        fallback_info = yf.Ticker(symbol).info
+                        name = fallback_info.get("longName") or fallback_info.get("shortName") or symbol
+                    except:
+                        pass 
+                        
+                results.append({"symbol": symbol, "name": name})
+
+    except Exception as e:
+        # Use proper logging in production
+        print(f"Ticker search error for '{query}': {e}")
+
+    return results[:6]
 
 # Stock table endpoint
 MAG7 = ["AAPL", "MSFT", "GOOGL", "AMZN", "NVDA", "META", "TSLA"]
