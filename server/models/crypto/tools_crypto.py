@@ -1,0 +1,112 @@
+from pydantic import BaseModel, Field, ConfigDict
+from typing import Optional
+
+# Technical Analysis Models
+class TechnicalAnalysis(BaseModel):
+    """Technical analysis data for a crypto ticker."""
+
+    ticker: str = Field(..., description="Crypto ticker")
+    current_price: float = Field(..., description="Current price")
+    analysis_date: str = Field(
+        ..., description="Date and time of analysis in YYYY-MM-DD HH:MM:SS format"
+    )
+
+    # Momentum Indicators
+    rsi: Optional[float] = Field(None, description="Relative Strength Index (14-day)")
+    rsi_signal: str = Field(
+        ...,
+        description="RSI signal: oversold (<30), neutral, overbought (>70), or unknown",
+    )
+    stoch_k: Optional[float] = Field(None, description="Stochastic %K oscillator")
+    stoch_signal: str = Field(
+        ...,
+        description="Stochastic signal: oversold (<20), neutral, overbought (>80), or unknown",
+    )
+
+    # Trend Indicators
+    sma_50: Optional[float] = Field(None, description="50-day Simple Moving Average")
+    sma_50_trend: int = Field(
+        ..., description="Price vs 50-day SMA: 1 (above), -1 (below), 0 (unknown)"
+    )
+    sma_200: Optional[float] = Field(None, description="200-day Simple Moving Average")
+    sma_200_trend: int = Field(
+        ..., description="Price vs 200-day SMA: 1 (above), -1 (below), 0 (unknown)"
+    )
+    macd: Optional[float] = Field(None, description="MACD line value")
+    macd_signal_value: int = Field(
+        ..., description="MACD vs Signal: 1 (bullish), -1 (bearish), 0 (unknown)"
+    )
+
+    # Volatility
+    bb_position: Optional[float] = Field(
+        None, description="Position within Bollinger Bands as percentage (0-100)"
+    )
+    bb_signal: str = Field(
+        ...,
+        description="Bollinger Bands signal: oversold (price < lower), neutral, overbought (price > upper), or unknown",
+    )
+
+    # Overall assessment
+    overall_sentiment: float = Field(
+        ...,
+        description="Overall technical sentiment score from -1 (bearish) to 1 (bullish)",
+    )
+
+    error: Optional[str] = Field(None, description="Error message if analysis failed")
+
+
+class TechnicalAnalysisInput(BaseModel):
+    """Input schema for technical analysis tool."""
+
+    ticker: str = Field(..., description="Crypto ticker (e.g., 'BTC-USD', 'ETH-USD')")
+
+
+# Macro Data Models
+class HistoricalDataPoint(BaseModel):
+    """A single historical data point with date and value."""
+
+    date: str = Field(..., description="Date in YYYY-MM-DD format")
+    value: float = Field(..., description="The value at this date")
+
+
+class IndicatorData(BaseModel):
+    """Data for a single macroeconomic indicator."""
+
+    latest_value: float = Field(..., description="Most recent value")
+    latest_date: str = Field(
+        ..., description="Date of most recent value in YYYY-MM-DD format"
+    )
+    historical_data: list[HistoricalDataPoint] = Field(
+        ..., description="Historical time series data"
+    )
+    quarterly_change_pct_points: Optional[float] = Field(
+        None,
+        description="Quarterly change in percentage points (for rate-based indicators)",
+    )
+    monthly_change_percent: Optional[float] = Field(
+        None, description="Monthly percentage change (for index-based indicators)"
+    )
+    yoy_inflation_rate: Optional[float] = Field(
+        None, description="Year-over-year inflation rate (CPI only)"
+    )
+    error: Optional[str] = Field(
+        None, description="Error message if data retrieval failed"
+    )
+
+
+class MacroDataResponse(BaseModel):
+    """Response containing macroeconomic data from FRED."""
+
+    timestamp: str = Field(..., description="Timestamp when data was retrieved")
+    data: dict[str, IndicatorData] = Field(
+        ..., description="Dictionary of indicator names to their data"
+    )
+    error: Optional[str] = Field(
+        None, description="Error message if overall retrieval failed"
+    )
+
+
+class MacroDataInput(BaseModel):
+    """Input schema for the macro data tool. No parameters required."""
+
+    model_config = ConfigDict(arbitrary_types_allowed=True)
