@@ -20,6 +20,8 @@ from slowapi.errors import RateLimitExceeded
 
 from graph import research_chain
 from models.api import EquityResearchRequest
+from models.crypto.api_crypto import CryptoResearchRequest
+from graph_crypto import research_chain_crypto
 import yfinance as yf
 from datetime import datetime
 
@@ -92,6 +94,32 @@ async def research_equity(request: Request, req: EquityResearchRequest):
             "industry": res.industry_sentiment,
             "news": res.news_sentiment,
             # "filings": res.filings_sentiment,
+        },
+        "combined_sentiment": res.combined_sentiment,
+    }
+
+
+# Crypto equity research endpoint 
+@api.post("/research-crypto") 
+@limiter.limit("10/minute")
+async def research_crypto(request: Request, req: CryptoResearchRequest):  
+
+    sanitized_ticker = sanitize_ticker(req.ticker)
+
+    res = await research_chain_crypto.ainvoke(
+        {
+            "ticker": sanitized_ticker,
+            "trade_duration": req.trade_duration,
+            "trade_direction": req.trade_direction,
+        }
+    )
+    return {
+        "ticker": res.ticker,
+        "sentiment_analysis": {  
+            "technical": res.technical_sentiment, 
+            "macro": res.macro_sentiment,
+            "peer": res.peer_sentiment,
+            "news": res.news_sentiment,
         },
         "combined_sentiment": res.combined_sentiment,
     }
