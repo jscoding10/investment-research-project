@@ -1,0 +1,119 @@
+<section class="min-h-full bg-gray-950 text-white">
+  <div class="px-6 py-20 md:py-24">
+    <div class="mx-auto max-w-4xl">
+      <div class="mb-12 text-center">
+        <h2 class="text-4xl font-black leading-tight tracking-tight md:text-5xl">Crypto Research Report</h2>
+      </div>
+      <form
+        [formGroup]="cryptoResearchForm"
+        (ngSubmit)="onSubmit()"
+        class="rounded-2xl border border-white/10 bg-white/5 p-8 shadow-2xl backdrop-blur-lg md:p-10">
+        <div class="grid gap-6 md:grid-cols-3">
+          <div class="md:col-span-1">
+            <label
+              for="ticker"
+              class="mb-2 block text-sm font-medium opacity-80">
+              Crypto Ticker
+            </label>
+            <p-autoComplete
+              id="ticker"
+              formControlName="ticker"
+              [suggestions]="cryptoSuggestions"
+              (completeMethod)="search($event)"
+              optionLabel="symbol"
+              optionValue="symbol"
+              styleClass="w-full"
+              inputStyleClass="w-full rounded-xl {{ isFieldInvalid('ticker') ? 'border-red-500' : '' }}"
+              placeholder="e.g. BTC"
+              [forceSelection]="true"
+              emptyMessage="No matching tickers found">
+              <!-- Dropdown suggestions -->
+              <ng-template
+                let-item
+                pTemplate="item">
+                <div class="flex items-center py-1">
+                  <span class="font-medium">{{ item.symbol }}</span>
+                  <span class="ml-3 text-sm opacity-70">{{ item.name }}</span>
+                </div>
+              </ng-template>
+              <!-- Selected item -->
+              <ng-template
+                let-item
+                pTemplate="selectedItem">
+                <div class="font-medium">{{ item }}</div>
+              </ng-template>
+            </p-autoComplete>
+
+            @if (isFieldInvalid('ticker')) {
+              <small class="mt-1 text-sm text-red-400">Ticker is required</small>
+            }
+          </div>
+          <div class="md:col-span-1">
+            <label
+              for="direction"
+              class="mb-2 block text-sm font-medium opacity-80">
+              Position
+            </label>
+            <p-select
+              id="direction"
+              formControlName="trade_direction"
+              [options]="tradeDirectionOptions"
+              optionLabel="name"
+              optionValue="value"
+              placeholder="Long or Short?"
+              styleClass="w-full"
+              [invalid]="isFieldInvalid('direction')"
+              class="custom-select">
+              <ng-template
+                pTemplate="selectedItem"
+                let-selected>
+                <span class="font-medium">{{ selected?.name || 'Long or Short?' }}</span>
+              </ng-template>
+            </p-select>
+            @if (isFieldInvalid('direction')) {
+              <small class="mt-1 text-sm text-red-400">Please select a direction</small>
+            }
+          </div>
+          <div class="md:col-span-1">
+            <label
+              for="duration"
+              class="mb-2 block text-sm font-medium opacity-80">
+              Trade Duration
+            </label>
+            <p-select
+              id="duration"
+              formControlName="trade_duration"
+              [options]="tradeDurationOptions"
+              optionLabel="name"
+              optionValue="value"
+              placeholder="Day, Swing, Long"
+              styleClass="w-full"
+              [invalid]="isFieldInvalid('duration')"
+              class="custom-select">
+              <ng-template
+                pTemplate="selectedItem"
+                let-selected>
+                <span class="font-medium">{{ selected?.name || 'Holding period' }}</span>
+              </ng-template>
+            </p-select>
+            @if (isFieldInvalid('duration')) {
+              <small class="mt-1 text-sm text-red-400">Please select a trade duration</small>
+            }
+          </div>
+        </div>
+        <div class="mt-10 flex justify-center">
+          <button
+            pButton
+            type="submit"
+            label="Generate Research Report →"
+            class="text-md transform rounded-xl bg-lime-400 px-12 py-5 font-bold text-black shadow-lg transition-all hover:scale-105 hover:bg-lime-300">
+            Submit
+          </button>
+        </div>
+      </form>
+      <div class="mt-12 text-center text-sm">
+        Powered by Groq • Real-time data from Yahoo Finance, FRED, reputable financial news sources and more
+      </div>
+    </div>
+  </div>
+</section>
