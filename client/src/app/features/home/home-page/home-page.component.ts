@@ -1,8 +1,9 @@
 // Angular
 import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 
-// PrimeNG
+// Libraries
 import { CardModule } from 'primeng/card';
 import { DrawerModule } from 'primeng/drawer';
 import { ButtonModule } from 'primeng/button';
@@ -10,10 +11,10 @@ import { SelectModule } from 'primeng/select';
 import { MessageModule } from 'primeng/message';
 import { InputTextModule } from 'primeng/inputtext';
 
+import { Subject, takeUntil } from 'rxjs';
+
 // Application
 import { MarketDataComponent } from '../market-data/market-data.component';
-import { Subject, takeUntil } from 'rxjs';
-import { Router } from '@angular/router';
 
 interface InvestmentTypeOption {
   name: string;
@@ -96,7 +97,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
     }
 
     if (this.homepageForm.get('investmentType')?.value === 'crypto') {
-      this.router.navigate(['crypto-equity-research']);
+      this.router.navigate(['crypto-research']);
     }
 
     if (this.homepageForm.get('investmentType')?.value === 'home') {
