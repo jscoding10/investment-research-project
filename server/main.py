@@ -178,6 +178,76 @@ async def ticker_search(q: str = ""):
 
     return results[:6]
 
+@api.get("/crypto-ticker-search")
+async def crypto_ticker_search(q: str = ""):
+    query = q.strip().upper() if q else ""
+    
+    if not query:
+        return []
+
+    results = []
+    seen = set()
+
+    try:
+        # 1. Quick exact / prefix-style match: always try {query}-USD pattern first
+        # This catches BTC → BTC-USD, ETH → ETH-USD, etc. reliably
+        crypto_symbol = f"{query}-USD"
+        if crypto_symbol not in seen:
+            try:
+                ticker = yf.Ticker(crypto_symbol)
+                info = ticker.info or {}
+                
+                # Simple check: if we get valid info and it's crypto-like
+                if info.get("regularMarketPrice") or info.get("quoteType") == "CRYPTOCURRENCY":
+                    name = info.get("longName") or info.get("shortName") or f"{query} USD"
+                    results.append({"symbol": crypto_symbol, "name": name})
+                    seen.add(crypto_symbol)
+            except:
+                pass
+
+        # 2. If short query or exact didn't work → try the search API (like stock version)
+        if len(query) >= 2 and len(results) == 0:  # or always do it if you want more results
+            search_data = yf.utils.get_json(
+                f"https://query2.finance.yahoo.com/v1/finance/search?q={query}&quotesCount=10&newsCount=0"
+            )
+
+            for item in search_data.get("quotes", [])[:10]:
+                symbol = item.get("symbol", "").upper()
+                if symbol in seen:
+                    continue
+
+                # Accept only clear crypto items
+                if (
+                    item.get("quoteType") == "CRYPTOCURRENCY"
+                    or item.get("typeDisp") in ["Cryptocurrency", "Crypto"]
+                    or "-USD" in symbol
+                ):
+                    seen.add(symbol)
+
+                    name = (
+                        item.get("longname")
+                        or item.get("shortname")
+                        or item.get("name")
+                        or symbol
+                    )
+
+                    # Quick fallback for bad names
+                    if name == symbol or "USD" in name.upper():
+                        try:
+                            fallback_info = yf.Ticker(symbol).info
+                            name = fallback_info.get("longName") or fallback_info.get("shortName") or name
+                        except:
+                            pass
+
+                    results.append({"symbol": symbol, "name": name})
+
+        # Limit and return (no reordering for simplicity)
+        return results[:6]
+
+    except Exception as e:
+        print(f"Crypto ticker search error for '{query}': {e}")
+        return []
+    
 # Stock table endpoint
 MAG7 = ["AAPL", "MSFT", "GOOGL", "AMZN", "NVDA", "META", "TSLA"]
 
