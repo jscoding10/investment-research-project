@@ -1,0 +1,5 @@
+@if (!isLoading() && !report() && !error()) {
+  <app-crypto-research-form></app-crypto-research-form>
+} @else {
+  <app-crypto-research-report></app-crypto-research-report>
+}
