@@ -11,7 +11,7 @@ import type { TDocumentDefinitions, Content, StyleDictionary } from 'pdfmake/int
 import { TooltipModule } from 'primeng/tooltip';
 
 // Application
-import { StockReport } from '../../state/stock-state';
+import { StockReport } from '../../services/stock-equity-research-state.service';
 import { StockEquityResearchStateService } from '../../services/stock-equity-research-state.service';
 
 @Component({

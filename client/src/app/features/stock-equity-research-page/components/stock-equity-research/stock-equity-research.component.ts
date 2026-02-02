@@ -2,7 +2,6 @@ import { Component, inject, Input, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { StockEquityResearchFormComponent } from '../stock-equity-research-form/stock-equity-research-form.component';
 import { StockEquityResearchReportComponent } from '../stock-equity-research-report/stock-equity-research-report.component';
-import { StocksState } from '../../state/stock-state';
 import { StockEquityResearchStateService } from '../../services/stock-equity-research-state.service';
 
 export interface StockReport {

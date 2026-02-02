@@ -67,7 +67,6 @@ export class StockEquityResearchStateService {
     this._error.set(null);
   }
 
-  // Helpful for debugging or future analytics
   getCurrentStateSnapshot() {
     return {
       request: this._request(),

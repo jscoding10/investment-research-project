@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { StockReport, StockRequest } from '../state/stock-state';
+import { StockReport, StockRequest } from './stock-equity-research-state.service';
 import { finalize } from 'rxjs';
 import { StockEquityResearchStateService } from './stock-equity-research-state.service';
 import { environment } from '../../../../environments/environment';
