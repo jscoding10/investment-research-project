@@ -2,7 +2,7 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-// PrimeNG
+// Libraries
 import { SelectButtonModule } from 'primeng/selectbutton';
 
 // Application
