@@ -7,13 +7,13 @@
     </h1>
     <p class="mt-8 text-xl opacity-90 md:text-2xl">
       One prompt → full AI research report in under 60 seconds<sup>1</sup>.<br />
-      Covers stocks, crypto<sup>2</sup>, or single-family investment properties<sup>3</sup>.
+      Covers stocks, crypto, or single-family investment properties<sup>2</sup>.
     </p>
     <form
       [formGroup]="homepageForm"
       (ngSubmit)="onSubmit()">
       <div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-        <!-- Asset Type Selector -->
+        
         <div class="w-full sm:w-64">
           <div class="card flex justify-center">
             <p-select
@@ -38,7 +38,6 @@
     </form>
     <p class="mt-8 text-sm opacity-70"><sup>1</sup> Report generation times can vary</p>
     <p class="text-sm opacity-70"><sup>2</sup> Coming Soon. Stay Tuned For Updates</p>
-    <p class="text-sm opacity-70"><sup>3</sup> Coming Soon. Stay Tuned For Updates</p>
   </div>
 </section>
 <section class="bg-gray-50 py-20">
