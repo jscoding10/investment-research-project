@@ -35,7 +35,7 @@ export class SideNavigationComponent {
     {
       label: 'Crypto Research',
       icon: 'currency_bitcoin',
-      route: '/crypto-equity-research',
+      route: '/crypto-research',
     },
     {
       label: 'Investment Property',

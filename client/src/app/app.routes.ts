@@ -14,5 +14,12 @@ export const routes: Routes = [
         (m) => m.StockEquityResearchComponent,
       ),
   },
+  {
+    path: 'crypto-research',
+    loadComponent: () =>
+      import('./features/crypto-research-page/components/crypto-research/crypto-research.component').then(
+        (m) => m.CryptoResearchComponent,
+      ),
+  },
   { path: '**', redirectTo: '/home' },
 ];
