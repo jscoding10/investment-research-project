@@ -15,6 +15,13 @@ from util.logger import get_logger
 from models.real_estate.state_real_estate import RealEstateResearchState
 from util.real_estate.formatting_real_estate import format_analysis_output
 
+from util.real_estate.cache_real_estate import (
+    create_property_cache_policy,
+    create_financial_cache_policy,
+    create_market_cache_policy,
+    create_risk_cache_policy,
+)
+
 load_dotenv()
 logger = get_logger(__name__)
 
@@ -130,11 +137,30 @@ def sentiment_router(state: RealEstateResearchState):
 
 graph_builder = StateGraph(RealEstateResearchState)
 
-# Active nodes
-graph_builder.add_node("data_retrieval", data_retrieval_node)
-graph_builder.add_node("financial_analysis_agent", financial_analysis_agent)
-graph_builder.add_node("market_trends_agent", market_trends_agent)
-graph_builder.add_node("risk_assessment_agent", risk_assessment_agent)
+# Active nodes 
+graph_builder.add_node(
+    "data_retrieval",
+    data_retrieval_node,
+    cache_policy=create_property_cache_policy(),   
+)
+
+graph_builder.add_node(
+    "financial_analysis_agent",
+    financial_analysis_agent,
+    cache_policy=create_financial_cache_policy(),  
+)
+
+graph_builder.add_node(
+    "market_trends_agent",
+    market_trends_agent,
+    cache_policy=create_market_cache_policy(),    
+)
+
+graph_builder.add_node(
+    "risk_assessment_agent",
+    risk_assessment_agent,
+    cache_policy=create_risk_cache_policy(),       
+)
 graph_builder.add_node("sentiment_aggregator", sentiment_aggregator)
 graph_builder.add_node("sentiment_evaluator", sentiment_evaluator)
 
