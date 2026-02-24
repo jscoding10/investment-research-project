@@ -22,6 +22,8 @@ from graph import research_chain
 from models.api import EquityResearchRequest
 from models.crypto.api_crypto import CryptoResearchRequest
 from graph_crypto import research_chain_crypto
+from models.real_estate.api_real_estate import RealEstateResearchRequest  
+from graph_real_estate import research_chain_real_estate
 import yfinance as yf
 from datetime import datetime
 
@@ -124,6 +126,39 @@ async def research_crypto(request: Request, req: CryptoResearchRequest):
         "combined_sentiment": res.combined_sentiment,
     }
 
+@api.post("/research-real-estate")
+@limiter.limit("10/minute")
+async def research_real_estate(request: Request, req: RealEstateResearchRequest):
+    try:
+        sanitized_address = sanitize_address(req.address)
+        
+        res = await research_chain_real_estate.ainvoke(
+            {
+                "address": sanitized_address,
+                "purchase_price": req.purchase_price,
+                "down_payment_pct": req.down_payment_pct,
+                "loan_term_years": req.loan_term_years,
+                "interest_rate": req.interest_rate,
+                "estimated_rent": req.estimated_rent,
+                "time_horizon_years": req.time_horizon_years,
+            }
+        )
+        return {
+            "address": res.address,
+            "analysis": {
+                "property": res.property_details,
+                "market": res.market_trends,
+                "financial": res.financial_analysis,
+                "risk": res.risk_assessment,
+            },
+            "combined_analysis": res.combined_analysis,
+        } 
+    except HTTPException as he:
+        raise he  
+    except Exception as e:
+        logger.error(f"Real estate research failed: {e}", exc_info=True)
+        raise HTTPException(500, detail="Internal error during analysis. Please try again later.")
+    
 # Ticker search endpoint for autocomplete 
 @api.get("/ticker-search")
 async def ticker_search(q: str = ""):
