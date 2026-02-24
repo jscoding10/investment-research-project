@@ -1,5 +1,5 @@
 from decimal import Decimal, ROUND_HALF_UP
-from typing import Dict, Any, Optional
+from typing import Optional
 
 from langchain_core.tools import Tool
 from models.real_estate.tools_real_estate import FinancialMetricsInput 
@@ -75,23 +75,6 @@ def compute_financial_metrics(
         assumed_apprec_yr = price * Decimal("0.03")  # 3% default
         total_return_yr = cash_flow_yr + assumed_apprec_yr
         irr_proxy = (total_return_yr / invested) * 100 if invested else Decimal("0")
-
-        # return {
-        #     "purchase_price": float(price),
-        #     "rent_monthly": float(rent_mo),
-        #     "mortgage_monthly": float(mortgage_mo.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)),
-        #     "total_expenses_monthly": float(total_exp_mo.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)),
-        #     "noi_annual": float(noi_yr.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)),
-        #     "cap_rate_pct": float(cap_rate.quantize(Decimal("0.1"), rounding=ROUND_HALF_UP)),
-        #     "cash_on_cash_pct": float(cash_on_cash.quantize(Decimal("0.1"), rounding=ROUND_HALF_UP)),
-        #     "breakeven_occupancy_pct": float(breakeven_occ.quantize(Decimal("0.1"), rounding=ROUND_HALF_UP)),
-        #     "irr_proxy_pct": float(irr_proxy.quantize(Decimal("0.1"), rounding=ROUND_HALF_UP)),
-        #     "recommendation": (
-        #         "Strong" if cap_rate > 7 and cash_on_cash > 8 else
-        #         "Marginal" if cap_rate > 5 and cash_on_cash > 5 else
-        #         "Negative"
-        #     )
-        # }
 
         return {
             "purchase_price": float(price),
