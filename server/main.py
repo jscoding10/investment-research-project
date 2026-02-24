@@ -27,6 +27,13 @@ from graph_real_estate import research_chain_real_estate
 import yfinance as yf
 from datetime import datetime
 
+import re
+from fastapi import HTTPException
+
+from util.logger import get_logger
+
+logger = get_logger(__name__)
+
 TICKER_PATTERN = re.compile(r"^[A-Z0-9.\-]{1,10}$")
 
 
@@ -42,6 +49,47 @@ def sanitize_ticker(ticker: str) -> str:
             status_code=400,
             detail="Invalid ticker format. Ticker must contain only letters, numbers, dots, or hyphens (max 10 characters)",
         )
+
+    return sanitized
+
+
+
+ADDRESS_PATTERN = re.compile(r'^[\w\s,.-/#&()\'"]{5,200}$', re.IGNORECASE)
+# Allows: letters, numbers, spaces, commas, periods, hyphens, slashes, #, &, parentheses, quotes
+# Length: min 5 chars (e.g. "123 Main"), max 200 (very long addresses)
+
+def sanitize_address(address: str) -> str:
+    """
+    Sanitize and lightly validate real estate address input.
+    Normalizes whitespace, removes leading/trailing junk, - keeps most formatting.
+    """
+    if not isinstance(address, str):
+        raise HTTPException(status_code=400, detail="Address must be a string")
+
+    # Strip leading and trailing whitespace
+    sanitized = address.strip()
+
+    if not sanitized:
+        raise HTTPException(status_code=400, detail="Address cannot be empty")
+
+    # Normalize multiple spaces / tabs / newlines → single space
+    sanitized = re.sub(r'\s+', ' ', sanitized)
+
+    # Remove trailing punctuation that is very unlikely in real addresses
+    sanitized = sanitized.rstrip(',.;')
+
+    # Basic format check
+    if not ADDRESS_PATTERN.match(sanitized):
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                "Invalid address format. Address should contain only letters, numbers, "
+                "spaces, and common punctuation (.,-/#&'\"). Minimum 5 characters."
+            )
+        )
+
+    # Consistent casing 
+    # sanitized = sanitized.title()   # uncomment if you want "123 Main St" instead of "123 main st"
 
     return sanitized
 
