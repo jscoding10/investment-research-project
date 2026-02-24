@@ -1,30 +1,4 @@
 from pydantic import BaseModel
-
-# def format_analysis_output(output: BaseModel) -> str:
-#     """Format analysis output as readable text."""
-#     lines = []
-#     data = output.model_dump()
-#     # Get main sentiment/recommendation
-#     if "trend" in data or "recommendation" in data or "overall_risk" in data:
-#         main_value = data.get("trend") or data.get("recommendation") or data.get("overall_risk")
-#         lines.append(f"**{main_value}**")
-#     lines.append("")
-#     # Key points
-#     for kp in data.get("key_points", []) or data.get("key_facts", []) or data.get("key_risks", []) or data.get("key_comps", []):
-#         if isinstance(kp, dict):
-#             source = f" [{kp['source']}, {kp.get('date', '')}]" if 'source' in kp else ""
-#             lines.append(f"* {kp['point']}{source}")
-#         else:
-#             lines.append(f"* {kp}")
-#     lines.append("")
-#     # Confidence
-#     if "confidence" in data:
-#         confidence_value = data['confidence'].value if hasattr(data['confidence'], 'value') else data['confidence']
-#         lines.append("")
-#         lines.append(f"**Confidence:** {confidence_value}")
-#     return "\n".join(lines)
-
-from pydantic import BaseModel
 from typing import Any
 from enum import Enum
 
