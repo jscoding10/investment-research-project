@@ -1,7 +1,12 @@
+// Angular
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { StockReport, StockRequest } from './stock-equity-research-state.service';
+
+// Libraries
 import { finalize } from 'rxjs';
+
+// Application
+import { StockReport, StockRequest } from './stock-equity-research-state.service';
 import { StockEquityResearchStateService } from './stock-equity-research-state.service';
 import { environment } from '../../../../environments/environment';
 
