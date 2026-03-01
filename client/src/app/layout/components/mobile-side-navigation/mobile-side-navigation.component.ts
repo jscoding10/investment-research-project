@@ -30,9 +30,9 @@ export class MobileSideNavigationComponent {
       route: '/crypto-research',
     },
     {
-      label: 'Investment Property',
-      icon: 'apartment',
-      route: '/investment-property',
+      label: 'Real Estate',
+      icon: 'house',
+      route: '/real-estate-research',
     },
   ]);
 
