@@ -1,9 +1,14 @@
+// Application
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { CryptoReport, CryptoRequest } from './crypto-research-state.service';
+
+// Libraries
 import { finalize } from 'rxjs';
+
+// Application
 import { CryptoResearchStateService } from './crypto-research-state.service';
 import { environment } from '../../../../environments/environment';
+import { CryptoReport, CryptoRequest } from './crypto-research-state.service';
 
 @Injectable({
   providedIn: 'root',
