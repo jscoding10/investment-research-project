@@ -1,15 +1,18 @@
 // Angular
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { CurrencyPipe } from '@angular/common';
 
-// PrimeNg
+// Libraries
+import { Subject, takeUntil } from 'rxjs';
+
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
-import { CurrencyPipe } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { SkeletonModule } from 'primeng/skeleton';
+
+// Application
 import { CurrentMarketDataService, StockData } from '../services/current-market-data.service';
-import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-stock-data-table',
