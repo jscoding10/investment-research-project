@@ -2,7 +2,7 @@
 import { Component, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-// PrimeNg
+// Libraries
 import { TooltipModule } from 'primeng/tooltip';
 import { DividerModule } from 'primeng/divider';
 
@@ -38,9 +38,9 @@ export class SideNavigationComponent {
       route: '/crypto-research',
     },
     {
-      label: 'Investment Property',
-      icon: 'apartment',
-      route: '/investment-property',
+      label: 'Real Estate',
+      icon: 'house',
+      route: '/real-estate-research',
     },
   ];
 }
