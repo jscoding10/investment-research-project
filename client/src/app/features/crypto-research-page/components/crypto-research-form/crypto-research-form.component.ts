@@ -1,8 +1,10 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+// Angular
+import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 
+// Libraries
 import { Subject, takeUntil } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
@@ -10,6 +12,7 @@ import { SelectModule } from 'primeng/select';
 import { InputTextModule } from 'primeng/inputtext';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 
+// Application
 import { CryptoResearchService } from '../../services/crypto-research.service';
 
 interface TradeDirectionOptions {
@@ -38,7 +41,7 @@ interface CryptoSuggestion {
   templateUrl: './crypto-research-form.component.html',
   styleUrl: './crypto-research-form.component.css',
 })
-export class CryptoResearchFormComponent {
+export class CryptoResearchFormComponent implements OnInit, OnDestroy {
   private cryptoResearchService = inject(CryptoResearchService);
   private http = inject(HttpClient);
 
