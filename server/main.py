@@ -1,6 +1,7 @@
 import os
 import re
 from dotenv import load_dotenv
+import requests
 load_dotenv()
 
 # Suppress gRPC/absl logging before importing anything that uses it
@@ -194,7 +195,6 @@ async def research_real_estate(request: Request, req: RealEstateResearchRequest)
         return {
             "address": res.address,
             "analysis": {
-                "property": res.property_details,
                 "market": res.market_trends,
                 "financial": res.financial_analysis,
                 "risk": res.risk_assessment,
@@ -329,6 +329,56 @@ async def crypto_ticker_search(q: str = ""):
 
     except Exception as e:
         print(f"Crypto ticker search error for '{query}': {e}")
+        return []
+    
+@api.get("/address-search")
+def address_search(q: str = ""):  
+    query = q.strip()
+    
+    if not query:
+        return []
+
+    url = "https://us-autocomplete-pro.api.smarty.com/lookup"
+    params = {
+        "auth-id": os.getenv("SMARTY_AUTH_ID"),
+        "auth-token": os.getenv("SMARTY_AUTH_TOKEN"),
+        "search": query,
+        "max_results": 10,
+    }
+
+    try:
+        resp = requests.get(url, params=params, timeout=10)  
+        resp.raise_for_status()  
+        data = resp.json()
+
+        suggestions = data.get("suggestions", [])
+        formatted = []
+
+        for sug in suggestions:
+            secondary = sug.get("secondary", "")
+            entries = sug.get("entries", 0)
+            if entries > 1:
+                display = f"{sug['street_line']} (Multiple units), {sug['city']}, {sug['state']} {sug['zipcode']}"
+            else:
+                display = f"{sug['street_line']} {secondary}, {sug['city']}, {sug['state']} {sug['zipcode']}".strip()
+
+            formatted.append({
+                "display": display,
+                "street": sug['street_line'],
+                "secondary": secondary,
+                "city": sug['city'],
+                "state": sug['state'],
+                "zipcode": sug['zipcode'],
+                "entries": entries
+            })
+
+        return formatted
+
+    except requests.exceptions.RequestException as e:
+        logger.error(f"Smarty address search failed: {e}")
+        return []
+    except Exception as e:
+        logger.error(f"Unexpected error in address search: {e}")
         return []
     
 # Stock table endpoint
