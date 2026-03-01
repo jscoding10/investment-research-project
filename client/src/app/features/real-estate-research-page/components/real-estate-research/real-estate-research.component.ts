@@ -1,6 +1,6 @@
 // Angular
-import { Component, inject, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, inject, OnDestroy } from '@angular/core';
 
 // Application
 import { RealEstateResearchFormComponent } from '../real-estate-research-form/real-estate-research-form.component';
