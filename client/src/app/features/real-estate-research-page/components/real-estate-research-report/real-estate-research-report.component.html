@@ -1,0 +1,126 @@
+<div class="min-h-full bg-black">
+  <!-- Loading Screen -->
+  @if (isLoading()) {
+    <div class="animate-pulse rounded-2xl border border-white/10 p-10 backdrop-blur-lg">
+      <div class="mb-8 flex items-start justify-between">
+        <div class="h-10 w-64 rounded-2xl bg-white/10"></div>
+        <div class="flex h-20 w-20 items-center justify-center rounded-full bg-lime-400/20">
+          <div class="m-auto h-12 w-12 animate-ping rounded-full bg-lime-400"></div>
+        </div>
+      </div>
+      <div class="space-y-6">
+        <div class="h-6 w-full rounded-lg bg-white/10"></div>
+        <div class="h-6 w-5/6 rounded-lg bg-white/10"></div>
+        <div class="mt-12 grid grid-cols-1 gap-8 md:grid-cols-2">
+          <div class="space-y-4">
+            <div class="h-32 rounded-xl bg-white/10"></div>
+          </div>
+          <div class="space-y-4">
+            <div class="h-32 rounded-xl bg-white/10"></div>
+          </div>
+        </div>
+      </div>
+      <p class="mt-10 text-center text-white/70">Preparing Real Estate Research Report...</p>
+    </div>
+  }
+
+  <div class="min-h-screen bg-black px-4 py-4 text-white">
+    @if (report(); as data) {
+      <!-- Download button -->
+      <div class="mb-4 flex justify-end">
+        <button
+          pTooltip="Download PDF"
+          (click)="exportToPDF()"
+          class="inline-flex items-center gap-3 rounded-xl border border-white/20 px-4 py-4 text-lg font-semibold transition hover:border-lime-400 hover:bg-lime-400/10 hover:text-lime-400">
+          <span class="material-symbols-outlined"> file_save </span>
+        </button>
+      </div>
+
+      <!-- Title with Address + Recommendation Badge -->
+      <div class="animate-fade-in mx-auto mb-12 max-w-4xl text-center">
+        <div class="mb-6 inline-flex flex-wrap items-center justify-center gap-4">
+          <h1 class="text-5xl font-black">{{ address() }}</h1>
+          <span
+            class="inline-block rounded-full px-6 py-5 text-xl font-black tracking-wider
+                  {{
+              getOverallRecommendation(data) === 'STRONG BUY'
+                ? 'border-2 border-lime-300 bg-lime-300/30 text-lime-300 shadow-lg shadow-lime-500/20'
+                : getOverallRecommendation(data) === 'AVOID'
+                  ? 'border-2 border-red-500 bg-red-500/20 text-red-400'
+                  : getOverallRecommendation(data) === 'HOLD'
+                    ? 'border-2 border-yellow-500 bg-yellow-500/20 text-yellow-400'
+                    : 'border-2 border-gray-500 bg-gray-500/20 text-gray-400'
+            }}">
+            {{ getOverallRecommendation(data) }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Combined Analysis -->
+      <div class="mx-auto mb-12 max-w-5xl">
+        <div
+          class="rounded-2xl border border-lime-500/30 bg-gradient-to-br from-lime-900/20 to-transparent p-8 backdrop-blur">
+          <h2 class="mb-6 text-center text-3xl font-bold text-lime-400">{{ address() }} Real Estate Research Report</h2>
+          <markdown
+            [data]="data.combined_analysis"
+            class="prose prose-invert prose-lg max-w-none" />
+        </div>
+      </div>
+
+      <!-- Cards -->
+      <div class="mx-auto max-w-7xl">
+        <div class="grid gap-6 lg:grid-cols-3 lg:gap-8">
+          <!-- Market Trends -->
+          <div
+            class="rounded-2xl border border-white/10 bg-white/5 p-6 transition hover:border-lime-500/50 active:scale-[0.98] active:border-lime-400 lg:active:scale-100">
+            <h3 class="mb-4 flex items-center gap-3 text-xl font-bold text-lime-400">
+              <span class="material-symbols-outlined text-2xl">trending_up</span>
+              Market Trends
+            </h3>
+            <markdown
+              [data]="data.analysis.market"
+              class="prose prose-invert prose-sm sentiment-card break-words" />
+          </div>
+
+          <!-- Financial Analysis -->
+          <div
+            class="rounded-2xl border border-white/10 bg-white/5 p-6 transition hover:border-lime-500/50 active:scale-[0.98] active:border-lime-400 lg:active:scale-100">
+            <h3 class="mb-4 flex items-center gap-3 text-xl font-bold text-lime-400">
+              <span class="material-symbols-outlined text-2xl">account_balance</span>
+              Financial Analysis
+            </h3>
+            <markdown
+              [data]="data.analysis.financial"
+              class="prose prose-invert prose-sm sentiment-card break-words" />
+          </div>
+
+          <!-- Risk Assessment -->
+          <div
+            class="rounded-2xl border border-white/10 bg-white/5 p-6 transition hover:border-lime-500/50 active:scale-[0.98] active:border-lime-400 lg:active:scale-100">
+            <h3 class="mb-4 flex items-center gap-3 text-xl font-bold text-lime-400">
+              <span class="material-symbols-outlined text-2xl">warning</span>
+              Risk Assessment
+            </h3>
+            <markdown
+              [data]="data.analysis.risk"
+              class="prose prose-invert prose-sm sentiment-card break-words" />
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Idle State -->
+    @if (!isLoading() && !report() && !error()) {
+      <div class="py-32 text-center text-white/40">
+        <p class="text-2xl">Enter property details above to generate an AI-powered research report</p>
+      </div>
+    }
+
+    <!-- Error State -->
+    @if (error()) {
+      <div class="mx-auto max-w-2xl rounded-xl border border-red-500 bg-red-900/50 p-6 text-red-300">
+        {{ error() }}
+      </div>
+    }
+  </div>
+</div>
