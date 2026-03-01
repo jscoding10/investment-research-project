@@ -1,5 +1,8 @@
-import { Component, inject, Input, signal } from '@angular/core';
+// Angular
+import { Component, inject, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+
+// Application
 import { StockEquityResearchFormComponent } from '../stock-equity-research-form/stock-equity-research-form.component';
 import { StockEquityResearchReportComponent } from '../stock-equity-research-report/stock-equity-research-report.component';
 import { StockEquityResearchStateService } from '../../services/stock-equity-research-state.service';
@@ -19,7 +22,7 @@ export interface StockReport {
   templateUrl: './stock-equity-research.component.html',
   styleUrl: './stock-equity-research.component.css',
 })
-export class StockEquityResearchComponent {
+export class StockEquityResearchComponent implements OnDestroy {
   state = inject(StockEquityResearchStateService);
   report = this.state.report;
   isLoading = this.state.isLoading;
