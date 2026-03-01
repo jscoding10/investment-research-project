@@ -21,5 +21,13 @@ export const routes: Routes = [
         (m) => m.CryptoResearchComponent,
       ),
   },
+  {
+    path: 'real-estate-research',
+    loadComponent: () =>
+      import('./features/real-estate-research-page/components/real-estate-research/real-estate-research.component').then(
+        (m) => m.RealEstateResearchComponent,
+      ),
+  },
+
   { path: '**', redirectTo: '/home' },
 ];
