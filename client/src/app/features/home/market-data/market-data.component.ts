@@ -1,13 +1,11 @@
-// Angular
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-// Libraries
 import { SelectButtonModule } from 'primeng/selectbutton';
 
-// Application
-import { StockDataTableComponent } from '../stock-data-table/stock-data-table.component';
 import { CryptoDataTableComponent } from '../crypto-data-table/crypto-data-table.component';
+import { StockDataTableComponent } from '../stock-data-table/stock-data-table.component';
+
 @Component({
   selector: 'app-market-data',
   imports: [SelectButtonModule, FormsModule, StockDataTableComponent, CryptoDataTableComponent],

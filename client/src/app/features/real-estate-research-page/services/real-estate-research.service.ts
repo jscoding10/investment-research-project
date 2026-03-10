@@ -1,13 +1,12 @@
-// Angular
-import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
 
-// Libraries
-import { finalize } from 'rxjs';
+import { finalize } from 'rxjs/operators';
 
-// Application
-import { RealEstateReport, RealEstateRequest } from './real-estate-research-state.service';
+import { RealEstateReport, RealEstateRequest } from '../types';
+
 import { RealEstateResearchStateService } from './real-estate-research-state.service';
+
 import { environment } from '../../../../environments/environment';
 
 @Injectable({
@@ -40,7 +39,7 @@ export class RealEstateResearchService {
             errorMsg =
               typeof err.error.detail === 'string'
                 ? // Sometimes FastAPI returns an array of errors (e.g., pydantic validation)
-                err.error.detail
+                  err.error.detail
                 : Array.isArray(err.error.detail)
                   ? err.error.detail.map((d: any) => d.msg || d).join('; ')
                   : 'Validation error';

@@ -1,18 +1,16 @@
-// Angular
 import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { CurrencyPipe } from '@angular/common';
-
-// Libraries
-import { TableModule } from 'primeng/table';
-import { TagModule } from 'primeng/tag';
-import { CardModule } from 'primeng/card';
-import { SkeletonModule } from 'primeng/skeleton';
+import { CommonModule, CurrencyPipe } from '@angular/common';
 
 import { Subject, takeUntil } from 'rxjs';
 
-// Application
-import { CryptoData, CurrentMarketDataService } from '../services/current-market-data.service';
+import { CardModule } from 'primeng/card';
+import { SkeletonModule } from 'primeng/skeleton';
+import { TableModule } from 'primeng/table';
+import { TagModule } from 'primeng/tag';
+
+import { CryptoData } from '../types';
+
+import { CurrentMarketDataService } from '../services/current-market-data.service';
 
 @Component({
   selector: 'app-crypto-data-table',

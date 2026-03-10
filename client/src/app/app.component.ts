@@ -1,12 +1,10 @@
-// Angular
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
-// Application
-import { TopBarComponent } from './layout/components/top-bar/top-bar.component';
-import { SideNavigationComponent } from './layout/components/side-navigation/side-navigation.component';
 import { FooterComponent } from './layout/components/footer/footer.component';
 import { MobileSideNavigationComponent } from './layout/components/mobile-side-navigation/mobile-side-navigation.component';
+import { SideNavigationComponent } from './layout/components/side-navigation/side-navigation.component';
+import { TopBarComponent } from './layout/components/top-bar/top-bar.component';
 
 @Component({
   selector: 'app-root',

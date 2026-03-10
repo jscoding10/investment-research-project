@@ -1,40 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { catchError, Observable, of } from 'rxjs';
+
+import { Observable } from 'rxjs';
+
+import { CryptoDataResponse, StockDataResponse } from '../types';
+
 import { environment } from '../../../../environments/environment';
-
-export interface StockData {
-  ticker: string;
-  name: string;
-  price: number;
-  change_pct: number;
-  volume: number;
-  currency: string;
-}
-
-interface StockDataResponse {
-  data: StockData[];
-  failed: string[];
-  updated: string;
-  source: string;
-}
-
-export interface CryptoData {
-  ticker: string;
-  name: string;
-  price: number;
-  change_pct: number;
-  volume: number;
-  currency: string;
-  displayName?: string;
-}
-
-interface CryptoDataResponse {
-  data: CryptoData[];
-  failed: string[];
-  updated: string;
-  source: string;
-}
 
 @Injectable({
   providedIn: 'root',

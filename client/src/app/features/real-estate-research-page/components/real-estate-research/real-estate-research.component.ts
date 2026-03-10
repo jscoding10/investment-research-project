@@ -1,10 +1,9 @@
-// Angular
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnDestroy } from '@angular/core';
 
-// Application
 import { RealEstateResearchFormComponent } from '../real-estate-research-form/real-estate-research-form.component';
 import { RealEstateResearchReportComponent } from '../real-estate-research-report/real-estate-research-report.component';
+
 import { RealEstateResearchStateService } from '../../services/real-estate-research-state.service';
 
 @Component({

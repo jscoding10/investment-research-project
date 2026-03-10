@@ -1,17 +1,17 @@
-// Angular
-import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, inject } from '@angular/core';
 
-// Libraries
 import { MarkdownModule } from 'ngx-markdown';
-import { unified } from 'unified';
-import remarkParse from 'remark-parse';
-import remarkGfm from 'remark-gfm';
-import type { TDocumentDefinitions, Content, StyleDictionary } from 'pdfmake/interfaces';
 import { TooltipModule } from 'primeng/tooltip';
 
-// Application
-import { StockReport } from '../../services/stock-equity-research-state.service';
+import { unified } from 'unified';
+import remarkGfm from 'remark-gfm';
+import remarkParse from 'remark-parse';
+
+import type { Content, StyleDictionary, TDocumentDefinitions } from 'pdfmake/interfaces';
+
+import { StockReport } from '../../types';
+
 import { StockEquityResearchStateService } from '../../services/stock-equity-research-state.service';
 
 @Component({

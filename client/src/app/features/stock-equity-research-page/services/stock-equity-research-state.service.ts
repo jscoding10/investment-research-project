@@ -1,23 +1,6 @@
 import { computed, Injectable, signal } from '@angular/core';
 
-export interface StockRequest {
-  ticker: string;
-  direction: 'long' | 'short';
-  duration: string;
-}
-
-export interface StockReport {
-  ticker: string;
-  sentiment_analysis: {
-    fundamental: string;
-    technical: string;
-    macro: string;
-    industry: string;
-    news: string;
-    peer: string;
-  };
-  combined_sentiment: string;
-}
+import { StockReport, StockRequest } from '../types';
 
 @Injectable({
   providedIn: 'root',
@@ -37,8 +20,8 @@ export class StockEquityResearchStateService {
 
   // Derived / computed state
   readonly ticker = computed(() => this._request()?.ticker.toUpperCase() ?? '');
-  readonly direction = computed(() => this._request()?.direction ?? null);
-  readonly duration = computed(() => this._request()?.duration ?? null);
+  readonly direction = computed(() => this._request()?.trade_direction ?? null);
+  readonly duration = computed(() => this._request()?.trade_duration ?? null);
   readonly hasReport = computed(() => this._report() !== null);
   readonly isIdle = computed(() => !this._isLoading() && !this._report() && !this._error());
 

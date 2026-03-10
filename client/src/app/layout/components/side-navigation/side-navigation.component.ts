@@ -1,16 +1,10 @@
-// Angular
 import { Component, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
-// Libraries
-import { TooltipModule } from 'primeng/tooltip';
 import { DividerModule } from 'primeng/divider';
+import { TooltipModule } from 'primeng/tooltip';
 
-interface NavItem {
-  label: string;
-  icon: string;
-  route: string;
-}
+import { SideNavItem } from '../../types';
 
 @Component({
   selector: 'app-side-navigation',
@@ -25,7 +19,7 @@ export class SideNavigationComponent {
     this.isExpanded.update((v) => !v);
   }
 
-  navItems: NavItem[] = [
+  navItems: SideNavItem[] = [
     { label: 'Home', icon: 'home', route: '/home' },
     {
       label: 'Stock Research',

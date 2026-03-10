@@ -1,17 +1,17 @@
-// Angular
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-// Libraries
 import { MarkdownModule } from 'ngx-markdown';
-import { unified } from 'unified';
-import remarkParse from 'remark-parse';
-import remarkGfm from 'remark-gfm';
-import type { TDocumentDefinitions, Content, StyleDictionary } from 'pdfmake/interfaces';
 import { TooltipModule } from 'primeng/tooltip';
 
-// Application
-import { CryptoReport } from '../../services/crypto-research-state.service';
+import { unified } from 'unified';
+import remarkGfm from 'remark-gfm';
+import remarkParse from 'remark-parse';
+
+import type { Content, StyleDictionary, TDocumentDefinitions } from 'pdfmake/interfaces';
+
+import { CryptoReport } from '../../types';
+
 import { CryptoResearchStateService } from '../../services/crypto-research-state.service';
 
 @Component({

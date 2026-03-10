@@ -1,25 +1,19 @@
-// Angular
 import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
-// Libraries
-import { CardModule } from 'primeng/card';
-import { DrawerModule } from 'primeng/drawer';
-import { ButtonModule } from 'primeng/button';
-import { SelectModule } from 'primeng/select';
-import { MessageModule } from 'primeng/message';
-import { InputTextModule } from 'primeng/inputtext';
-
 import { Subject, takeUntil } from 'rxjs';
 
-// Application
-import { MarketDataComponent } from '../market-data/market-data.component';
+import { ButtonModule } from 'primeng/button';
+import { CardModule } from 'primeng/card';
+import { DrawerModule } from 'primeng/drawer';
+import { InputTextModule } from 'primeng/inputtext';
+import { MessageModule } from 'primeng/message';
+import { SelectModule } from 'primeng/select';
 
-interface InvestmentTypeOption {
-  name: string;
-  code: string;
-}
+import { InvestmentTypeOption } from '../types';
+
+import { MarketDataComponent } from '../market-data/market-data.component';
 
 @Component({
   selector: 'app-home-page',
@@ -42,7 +36,7 @@ export class HomePageComponent implements OnInit, OnDestroy {
   investmentTypes: Array<InvestmentTypeOption> = [
     { name: 'Stocks', code: 'stock' },
     { name: 'Crypto', code: 'crypto' },
-    { name: 'Single-Family Home', code: 'home' },
+    { name: 'Real Estate', code: 'real-estate' },
   ];
 
   // Array of form control names
@@ -100,8 +94,8 @@ export class HomePageComponent implements OnInit, OnDestroy {
       this.router.navigate(['crypto-research']);
     }
 
-    if (this.homepageForm.get('investmentType')?.value === 'home') {
-      this.router.navigate(['investment-property']);
+    if (this.homepageForm.get('investmentType')?.value === 'real-estate') {
+      this.router.navigate(['real-estate-research']);
     }
   }
 

@@ -1,22 +1,10 @@
-// Angular
 import { Component, inject, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-// Application
 import { CryptoResearchFormComponent } from '../crypto-research-form/crypto-research-form.component';
 import { CryptoResearchReportComponent } from '../crypto-research-report/crypto-research-report.component';
-import { CryptoResearchStateService } from '../../services/crypto-research-state.service';
 
-export interface CryptoReport {
-  ticker: string;
-  sentiment_analysis: {
-    technical: string;
-    macro: string;
-    news: string;
-    peer: string;
-  };
-  combined_sentiment: string;
-}
+import { CryptoResearchStateService } from '../../services/crypto-research-state.service';
 
 @Component({
   selector: 'app-crypto-research',

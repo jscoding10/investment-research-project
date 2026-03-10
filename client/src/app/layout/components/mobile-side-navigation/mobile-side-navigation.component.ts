@@ -1,13 +1,8 @@
-// Angular
+import { CommonModule } from '@angular/common';
 import { Component, model, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { CommonModule } from '@angular/common';
 
-interface NavItem {
-  label: string;
-  icon: string;
-  route: string;
-}
+import { MobileNavItem } from '../../types';
 
 @Component({
   selector: 'app-mobile-side-navigation',
@@ -17,7 +12,7 @@ interface NavItem {
 })
 export class MobileSideNavigationComponent {
   // Local nav items — independent from desktop
-  navItems = signal<NavItem[]>([
+  navItems = signal<MobileNavItem[]>([
     { label: 'Home', icon: 'home', route: '/home' },
     {
       label: 'Stock Research',

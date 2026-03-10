@@ -1,9 +1,7 @@
-// Angular
 import { Component, output } from '@angular/core';
 
-// PrimeNg
-import { ToolbarModule } from 'primeng/toolbar';
 import { ButtonModule } from 'primeng/button';
+import { ToolbarModule } from 'primeng/toolbar';
 
 @Component({
   selector: 'app-top-bar',

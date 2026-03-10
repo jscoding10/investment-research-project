@@ -1,25 +1,6 @@
-// Angular
 import { computed, Injectable, signal } from '@angular/core';
 
-export interface RealEstateRequest {
-  address: string;
-  purchase_price: number;
-  down_payment_pct: number;
-  loan_term_years: number;
-  interest_rate: number;
-  estimated_rent: number;
-  time_horizon_years: number;
-}
-
-export interface RealEstateReport {
-  address: string;
-  analysis: {
-    market: string;
-    financial: string;
-    risk: string;
-  };
-  combined_analysis: string;
-}
+import { RealEstateReport, RealEstateRequest } from '../types';
 
 @Injectable({
   providedIn: 'root',
