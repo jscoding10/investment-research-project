@@ -1,39 +1,37 @@
-// Angular
 import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 
-// Libraries
 import { Subject, takeUntil } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
-import { SelectModule } from 'primeng/select';
-import { InputTextModule } from 'primeng/inputtext';
 import { AutoCompleteModule } from 'primeng/autocomplete';
+import { InputTextModule } from 'primeng/inputtext';
+import { SelectModule } from 'primeng/select';
 
-// Application
+import { StockRequest, StockSuggestion } from '../../types';
+import { FormFieldConfig, TradeDirectionOptions, TradeDurationOptions } from '../../../../types';
+
 import { StockResearchService } from '../../services/stock-research.service';
 
-interface TradeDirectionOptions {
-  name: string;
-  value: string;
-}
-
-interface TradeDurationOptions {
-  name: string;
-  value: string;
-}
-export interface StockRequest {
-  ticker: string;
-  direction: 'long' | 'short';
-  duration: string;
-}
-
-interface StockSuggestion {
-  symbol: string;
-  name: string;
-}
+const stockEquityFormConfig: FormFieldConfig[] = [
+  {
+    name: 'ticker',
+    type: 'autocomplete',
+    validators: [Validators.required],
+  },
+  {
+    name: 'tradeDirection',
+    type: 'select',
+    validators: [Validators.required],
+  },
+  {
+    name: 'tradeDuration',
+    type: 'select',
+    validators: [Validators.required],
+  },
+];
 
 @Component({
   selector: 'app-stock-equity-research-form',
@@ -44,15 +42,14 @@ interface StockSuggestion {
 export class StockEquityResearchFormComponent implements OnInit, OnDestroy {
   private stockResearchService = inject(StockResearchService);
   private http = inject(HttpClient);
+  private fb = inject(FormBuilder);
 
   stockSuggestions: StockSuggestion[] = [];
   // Signal to determine whether form is submitted or not
   submitted = signal(false);
 
-  // Initialize form group to empty object
-  stockEquityResearchForm = new FormGroup({});
-  // Array of form control names
-  formControls = ['ticker', 'trade_direction', 'trade_duration'];
+  // Initialize form builder group to empty object
+  stockEquityResearchForm = this.fb.group<Record<string, FormControl>>({});
 
   // PrimeNg Trade Direction Select Options
   tradeDirectionOptions: Array<TradeDirectionOptions> = [
@@ -74,7 +71,7 @@ export class StockEquityResearchFormComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     // Populate form group
-    this.makeForm();
+    this.buildForm(stockEquityFormConfig);
 
     this.searchTerms.pipe(debounceTime(500), takeUntil(this.destroy$)).subscribe((query) => {
       this.performSearch(query);
@@ -93,10 +90,9 @@ export class StockEquityResearchFormComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  makeForm() {
-    // Loop through array and generate form controls - all fields are required in this case
-    this.formControls.map((control) => {
-      this.stockEquityResearchForm.addControl(control, new FormControl('', Validators.required));
+  private buildForm(config: FormFieldConfig[]) {
+    config.forEach((field) => {
+      this.stockEquityResearchForm.addControl(field.name, this.fb.control(null, field.validators ?? []));
     });
   }
 
@@ -133,7 +129,14 @@ export class StockEquityResearchFormComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const request = this.stockEquityResearchForm.getRawValue() as StockRequest;
+    const raw = this.stockEquityResearchForm.getRawValue();
+
+    const request: StockRequest = {
+      ticker: raw['ticker'],
+      trade_direction: raw['tradeDirection'],
+      trade_duration: raw['tradeDuration'],
+    };
+
     this.stockResearchService.generateReport(request);
 
     this.stockEquityResearchForm.reset();
