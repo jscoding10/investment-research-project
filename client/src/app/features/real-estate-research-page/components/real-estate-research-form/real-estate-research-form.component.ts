@@ -1,31 +1,77 @@
-// Angular
 import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 
-// Libraries
 import { Subject, takeUntil } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
-// PrimeNG
-import { InputTextModule } from 'primeng/inputtext';
-import { InputNumberModule } from 'primeng/inputnumber';
 import { AutoCompleteModule, AutoCompleteSelectEvent } from 'primeng/autocomplete';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { InputTextModule } from 'primeng/inputtext';
 
-// Application
+import { AddressSuggestion, RealEstateRequest } from '../../types';
+import { FormFieldConfig } from '../../../../types';
+
 import { RealEstateResearchService } from '../../services/real-estate-research.service';
-import { RealEstateRequest } from '../../services/real-estate-research-state.service';
 
-interface AddressSuggestion {
-  display: string;
-  street: string;
-  secondary: string;
-  city: string;
-  state: string;
-  zipcode: string;
-  entries: number;
-}
+const realEstateFormConfig: FormFieldConfig[] = [
+  {
+    name: 'addressSearch',
+    type: 'text',
+    validators: [],
+  },
+  {
+    name: 'streetAddress',
+    type: 'text',
+    validators: [Validators.required],
+  },
+  {
+    name: 'city',
+    type: 'text',
+    validators: [Validators.required],
+  },
+  {
+    name: 'state',
+    type: 'text',
+    validators: [Validators.required],
+  },
+  {
+    name: 'zipCode',
+    type: 'text',
+    validators: [Validators.required],
+  },
+  {
+    name: 'purchasePrice',
+    type: 'number',
+    validators: [],
+  },
+  {
+    name: 'downPaymentPercent',
+    type: 'number',
+    validators: [Validators.required],
+  },
+  {
+    name: 'loanTermYears',
+    type: 'number',
+    validators: [Validators.required],
+  },
+  {
+    name: 'interestRate', // Add in init to call current rate
+    type: 'number',
+    validators: [Validators.required],
+  },
+  {
+    name: 'estimatedRent',
+    type: 'number',
+    validators: [],
+  },
+  {
+    name: 'timeHorizonYears',
+    type: 'number',
+    validators: [],
+  },
+];
 
 @Component({
   selector: 'app-real-estate-research-form',
@@ -36,22 +82,12 @@ interface AddressSuggestion {
 export class RealEstateResearchFormComponent implements OnInit, OnDestroy {
   private realEstateService = inject(RealEstateResearchService);
   private http = inject(HttpClient);
+  private fb = inject(FormBuilder);
 
   submitted = signal(false);
-  realEstateForm = new FormGroup<Record<string, FormControl>>({});
 
-  formControls = [
-    'streetAddress',
-    'city',
-    'state',
-    'zipCode',
-    'purchasePrice', // Optional
-    'downPaymentPercent', // Requred
-    'loanTermYears', // Required
-    'interestRate', // Required (Default to market rate based on down payment percent) - do call in init to grab the rates and update state of global variables
-    'estimatedRent', // Optional
-    'timeHorizonYears', // Optional
-  ];
+  // Initialize form builder group to empty object
+  realEstateForm = this.fb.group<Record<string, FormControl>>({});
 
   addressSuggestions: AddressSuggestion[] = [];
 
@@ -59,7 +95,7 @@ export class RealEstateResearchFormComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   ngOnInit() {
-    this.makeForm();
+    this.buildForm(realEstateFormConfig);
 
     this.realEstateForm.patchValue({
       downPaymentPercent: 20,
@@ -83,12 +119,10 @@ export class RealEstateResearchFormComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  makeForm() {
-    this.formControls.forEach((control) => {
-      this.realEstateForm.addControl(control, new FormControl(null, Validators.required));
+  private buildForm(config: FormFieldConfig[]) {
+    config.forEach((field) => {
+      this.realEstateForm.addControl(field.name, this.fb.control(null, field.validators ?? []));
     });
-
-    this.realEstateForm.addControl('addressSearch', new FormControl(null));
   }
 
   search(event: { query: string }) {
@@ -138,33 +172,22 @@ export class RealEstateResearchFormComponent implements OnInit, OnDestroy {
     }
 
     // Get raw values with proper typing (string | number | null)
-    const raw = this.realEstateForm.getRawValue() as {
-      streetAddress?: string | null;
-      city?: string | null;
-      state?: string | null;
-      zipCode?: string | null;
-      purchasePrice?: number | null;
-      downPaymentPercent?: number | null;
-      loanTermYears?: number | null;
-      interestRate?: number | null;
-      estimatedRent?: number | null;
-      timeHorizonYears?: number | null;
-    };
+    const raw = this.realEstateForm.getRawValue();
 
     // Build properly formatted address with commas
     const addressParts: string[] = [];
 
-    if (raw.streetAddress?.trim()) {
-      addressParts.push(raw.streetAddress.trim());
+    if (raw['streetAddress']?.trim()) {
+      addressParts.push(raw['streetAddress'].trim());
     }
-    if (raw.city?.trim()) {
-      addressParts.push(raw.city.trim());
+    if (raw['city']?.trim()) {
+      addressParts.push(raw['city'].trim());
     }
-    if (raw.state?.trim()) {
-      addressParts.push(raw.state.trim());
+    if (raw['state']?.trim()) {
+      addressParts.push(raw['state'].trim());
     }
-    if (raw.zipCode?.trim()) {
-      addressParts.push(raw.zipCode.trim());
+    if (raw['zipCode']?.trim()) {
+      addressParts.push(raw['zipCode'].trim());
     }
 
     const address = addressParts.join(', ');
@@ -172,12 +195,12 @@ export class RealEstateResearchFormComponent implements OnInit, OnDestroy {
     // Format field names for Python backend
     const request: RealEstateRequest = {
       address,
-      purchase_price: Number(raw.purchasePrice ?? 0),
-      down_payment_pct: Number(raw.downPaymentPercent ?? 0),
-      loan_term_years: Number(raw.loanTermYears ?? 0),
-      interest_rate: Number(raw.interestRate ?? 0),
-      estimated_rent: Number(raw.estimatedRent ?? 0),
-      time_horizon_years: Number(raw.timeHorizonYears ?? 0),
+      purchase_price: Number(raw['purchasePrice'] ?? 0),
+      down_payment_pct: Number(raw['downPaymentPercent'] ?? 0),
+      loan_term_years: Number(raw['loanTermYears'] ?? 0),
+      interest_rate: Number(raw['interestRate'] ?? 0),
+      estimated_rent: Number(raw['estimatedRent'] ?? 0),
+      time_horizon_years: Number(raw['timeHorizonYears'] ?? 0),
     };
 
     this.realEstateService.generateReport(request);
