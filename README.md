@@ -4,14 +4,22 @@
 
 Conviction Insight is a full-stack web application that implements an agentic AI structure to compile investment research reports across different asset classes.
 
-Currently live for stocks: The user enters a stock ticker (e.g., NVDA), trade direction (long or short), and trade duration (day trade, swing trade, or position trade). The app produces a comprehensive report with sentiment analysis across fundamentals, technicals, macro factors, industry trends, peer comparison, and news sentiment - synthesizing an overall bullish, bearish, or neutral conviction.
+⚠️ **Important Disclaimer**
 
-**In progress / upcoming features:**
+This is an experimental AI research tool — **not financial advice**. LLM-based analysis can contain factual errors, hallucinations, outdated data, or biased reasoning.
+Always do your own research and consult licensed professionals before making investment decisions.
+Past performance is not indicative of future results.
+The author assumes no liability for any losses.
 
-- Cryptocurrency analysis: Support for crypto tickers (e.g., BTC-USD, ETH-USD) with similar multi-agent sentiment workflow.
-- Single-family home real estate analysis: The user enters a full property address; the system retrieves property data, comps, estimated value, rental potential, neighborhood trends, and generates an AI-powered investment report (buy/neutral/pass conviction for rental or flip strategies).
+**Currently supported asset classes:**
 
-The app features a visually appealing UI, markdown-rendered insights, loading states, error handling, and PDF export.
+- **Stocks**: The user enters a stock ticker (e.g., NVDA), trade direction (long or short), and trade duration (day trade, swing trade, or position trade). The app produces a comprehensive report with sentiment analysis across fundamentals, technicals, macro factors, industry trends, peer comparison, and news sentiment, synthesizing an overall bullish, bearish, or neutral conviction.
+
+- **Cryptocurrencies**: The user enters a crypto ticker (e.g., BTC-USD, ETH-USD), trade direction (long or short), and trade duration (day trade, swing trade, or position trade). The app produces a comprehensive report with sentiment analysis across technicals, macro factors, peer comparison, and news sentiment (fundamentals and industry not applicable), weighted by trade duration, synthesizing an overall bullish, bearish, or neutral conviction.
+
+- **Real Estate**: The user enters a property address (e.g., 123 Main St, Las Vegas, NV 89101), optional purchase price, down payment percentage, estimated rent, and other financing assumptions. The app retrieves live property data, computes key rental investment metrics (cap rate, cash-on-cash return, breakeven occupancy), analyzes local market trends and neighborhood risk/livability, and synthesizes a clear strong buy, hold, or avoid recommendation for long-term buy-and-hold strategy.
+
+The app features a clean, responsive UI, markdown-rendered reports, loading states, robust error handling, and one-click PDF export.
 
 ## Instructions
 
@@ -21,41 +29,54 @@ The app features a visually appealing UI, markdown-rendered insights, loading st
 2. Create a `.env` file **in the `server` folder** with required variables (e.g., Groq API key – see `server/.env.example`).
 3. Set up a Python virtual environment **in the `server` folder** (Python 3.12 recommended):
 
-```
-python -m venv venv
-source venv/bin/activate # On Windows: venv\Scripts\activate
-```
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
 
-4. Install backend dependencies **(from the `server` folder)**:
+4. Install backend dependencies **(from the server folder)**:
 
-```
-pip install -r requirements.txt
-```
+   ```
+   pip install -r requirements.txt
+   ```
 
 5. Run the backend server:
 
-```
-uvicorn main:app --reload --port 8000
-```
+   ```
+   uvicorn main:app --reload --port 8000
+   ```
 
-The API will run on http://localhost:8000.
+   The API will run on http://localhost:8000.
 
-6. In a separate terminal, navigate to the `client` folder (Angular app):
+6. In a separate terminal, navigate to the client folder (Angular app):
 
-```
-cd client
-npm install
-ng serve
-```
+   ```
+   cd client
+   npm install
+   ng serve
+   ```
 
-The frontend will run on http://localhost:4200.
+   The frontend will run on http://localhost:4200.
 
 7. Open your browser to http://localhost:4200, enter a ticker like NVDA, select direction and duration, and generate a report.
+   **API test examples:**
 
-   To test the API directly:
+   Stocks:
 
    ```
    curl -X POST "http://localhost:8000/api/research-equity" -H "Content-Type: application/json" -d '{"ticker": "NVDA", "trade_duration": "swing_trade", "trade_direction": "long"}'
+   ```
+
+   Crypto:
+
+   ```
+   curl -X POST "http://localhost:8000/api/research-crypto" -H "Content-Type: application/json" -d '{"ticker": "BTC-USD", "trade_duration": "day_trade", "trade_direction": "short"}'
+   ```
+
+   Real Estate:
+
+   ```
+   curl -X POST "http://localhost:8000/api/research-real-estate" -H "Content-Type: application/json" -d '{"address": "123 Main St, Las Vegas, NV 89101", "purchase_price": 425000, "down_payment_pct": 25, "estimated_rent": 2200}'
    ```
 
 ### Running in Docker
@@ -64,22 +85,17 @@ This project uses a multi-stage Dockerfile to build the Angular frontend and ser
 
 To run the application locally with Docker, follow these steps:
 
-1. Create a `.env` file in the project root with your required environment variables (e.g., Groq API Keys – see `server/.env.example` for details).
+1. Create a .env file in the project root with your required environment variables (e.g., Groq API Keys – see server/.env.example for details).
 2. Ensure your local Docker daemon is running.
 3. Build and run the container from the project root:
 
-```
-docker build -t investment-research-project .
-docker run -p 8000:8000 --env-file .env investment-research-project
-```
+   ```
+   docker build -t investment-research-project . docker run -p 8000:8000 --env-file .env investment-research-project
+   ```
 
 4. The application will be available at http://localhost:8000.
 
-   To test the API directly:
-
-   ```
-   curl -X POST "http://localhost:8000/api/research-equity" -H "Content-Type: application/json" -d '{"ticker": "NVDA", "trade_duration": "swing_trade", "trade_direction": "long"}'
-   ```
+   To test the API directly, see the curl examples in the Running Locally section.
 
 ## Architecture
 
@@ -87,17 +103,17 @@ Conviction Insight uses a multi-agent LangGraph workflow to generate structured 
 
 ### Key Design Patterns
 
-- **Tool-Use Agents**: Fetch structured data via yfinance (Fundamental, Technical, Macro)
-- **Web RAG Agents**: Perform real-time research (News, Industry, Peer)
-- **Stateful Graph Execution**: Parallel agent runs → aggregation → quality evaluation with optional revisions
-- **Intelligent Caching**: Node-level TTLs (short for technicals, longer for macro/fundamentals)
+- **Tool-Use Agents:** Fetch structured data (yfinance, property APIs, FRED, etc.)
+- **Web RAG / Search Agents:** Real-time external research via Groq Compound
+- **Stateful Graph:** Parallel branches → aggregation → evaluator loop
+- **Intelligent Caching:** Per-node TTLs (short for news/technicals, longer for fundamentals/property data)
 
 ### Client (Frontend)
 
 <p>
-   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/angular/angular-original.svg" alt="Angular" width="30" align="left"/>
-   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/typescript/typescript-original.svg" alt="TypeScript" width="30" align="left"/>
-   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/tailwindcss/tailwindcss-original.svg" alt="Tailwind CSS" width="30" align="left"/>
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/angular/angular-original.svg" alt="Angular" width="30" align="left"/>
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/typescript/typescript-original.svg" alt="TypeScript" width="30" align="left"/>
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/tailwindcss/tailwindcss-original.svg" alt="Tailwind CSS" width="30" align="left"/>
 </p>
 <br>
 <br>
@@ -111,8 +127,8 @@ Conviction Insight uses a multi-agent LangGraph workflow to generate structured 
 ### Server (Backend)
 
 <p>
-   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/fastapi/fastapi-original.svg" alt="FastAPI" width="30" align="left"/>
-   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg" alt="Python" width="30" align="left"/>
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/fastapi/fastapi-original.svg" alt="FastAPI" width="30" align="left"/>
+    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg" alt="Python" width="30" align="left"/>
 </p>
 <br>
 <br>
@@ -123,35 +139,59 @@ Conviction Insight uses a multi-agent LangGraph workflow to generate structured 
 - Groq LLMs: Fast inference for all agents
 - In-memory caching: Dynamic policies per node to reduce cost/latency
 
-### Stock Equity Research Agents
+### Asset-Class Specific Agents
 
-| Agent        | Focus                                  | Method                 |
-| ------------ | -------------------------------------- | ---------------------- |
-| Fundamentals | Financial statements, valuations       | yfinance tool calls    |
-| Technical    | Price patterns, indicators (RSI, MACD) | yfinance + computation |
-| Macro        | Economic indicators, rates             | Structured data        |
-| Industry     | Sector trends, headwinds               | Web research           |
-| Peer         | Competitor comparison                  | Web research           |
-| News         | Recent headline and social sentiment   | Web research           |
+After parallel agent execution, a **Sentiment Aggregator** combines the results into a final recommendation (bullish/neutral/bearish for stocks & crypto; strong buy/hold/avoid for real estate), and a **Sentiment Evaluator** checks quality and triggers up to 3 revisions if necessary.
 
-After parallel execution, a **Sentiment Aggregator** synthesizes findings, and a **Sentiment Evaluator** enforces quality (up to 3 revisions).
+#### Stock Equity Research Agents
 
-(SEC Filings RAG agent in development)
+| Agent                | Focus                                          | Method                     |
+| -------------------- | ---------------------------------------------- | -------------------------- |
+| Fundamentals         | Financial statements, valuations               | yfinance tool calls        |
+| Technical            | Price patterns, indicators (RSI, MACD)         | yfinance + computation     |
+| Macro                | Economic indicators, rates                     | Structured data            |
+| Industry             | Sector trends, headwinds                       | Web research               |
+| Peer                 | Competitor comparison                          | Web research               |
+| News                 | Recent headline and social sentiment           | Web research               |
+| Sentiment Aggregator | Weighted synthesis: bullish/neutral/bearish    | LLM (iterative refinement) |
+| Sentiment Evaluator  | Quality gate (format, decisiveness, grounding) | Structured LLM critique    |
+
+#### Crypto Research Agents
+
+| Agent                | Focus                                                  | Method                     |
+| -------------------- | ------------------------------------------------------ | -------------------------- |
+| Technical            | Price patterns, indicators (RSI, MACD, SMA, Bollinger) | yfinance + computation     |
+| Macro                | Economic indicators, market conditions                 | Structured data            |
+| Peer                 | Competitor comparison                                  | Web research               |
+| News                 | Recent headline and market sentiment                   | Web research               |
+| Sentiment Aggregator | Weighted synthesis: bullish/neutral/bearish            | LLM (iterative refinement) |
+| Sentiment Evaluator  | Quality gate (format, decisiveness, grounding)         | Structured LLM critique    |
+
+#### Real Estate Research Agents
+
+| Agent                | Focus                                             | Method                             |
+| -------------------- | ------------------------------------------------- | ---------------------------------- |
+| Data Retrieval       | Property details, value, rent est, schools, crime | Zillow + RentCast + Crime APIs     |
+| Financial Analysis   | Cap rate, cash-on-cash, NOI, breakeven, mortgage  | Custom deterministic tool + LLM    |
+| Market Trends        | Local trends, inventory, YoY change, sentiment    | Zillow data + Groq Compound search |
+| Risk Assessment      | Crime grades, schools, livability, recent signals | Extracted data + Groq Compound     |
+| Sentiment Aggregator | Weighted synthesis: strong buy/hold/avoid         | LLM (iterative refinement)         |
+| Sentiment Evaluator  | Quality gate (format, decisiveness, grounding)    | Structured LLM critique            |
 
 ## Optimizations
 
-- Node-level caching in LangGraph (e.g., short TTL for technicals, longer for fundamentals/macro).
-- Bulk yfinance downloads for fast price tables.
+- Node-level caching (short TTL for volatile data like news/technicals, longer for property fundamentals)
+- Bulk data fetching where possible (yfinance, property scalars)
 - Efficient state management with Angular Signals to avoid unnecessary re-renders.
 - Custom markdown normalization and pdfmake parsing for clean PDF exports.
 
 ## Lessons Learned
 
-Building Conviction Insight deepened my understanding of multi-agent AI systems with LangGraph, including state management, conditional routing, and caching for cost/speed. On the frontend, mastering Angular Signals, PrimeNG integration, and custom PDF generation improved my skills in reactive, performant UIs. Integrating real-time financial data while handling errors and loading states honed full-stack reliability.
+Developing Conviction Insight deepened my understanding of maintainable multi-agent workflows with LangGraph, particularly the importance of clean state handling, conditional edges, revision cycles, and cost-effective caching. The frontend stack (Angular Signals, PrimeNG, Tailwind) proved exceptionally productive for building responsive and refined UIs. Integrating real-time financial and property APIs also sharpened my skills in robust error handling, partial-result rendering, and graceful degradation.
 
-## Improvements
+## Future Plans
 
-- Add support for crypto tickers (already partially implemented with yfinance crypto endpoints).
-- Implement real estate analysis for single-family home addresses (e.g., integrating property data APIs).
-- Add user authentication and saved reports/history.
-- Integrate observability tools like LangSmith for tracing agent executions.
+- User authentication and report history/saving
+- Observability (LangSmith tracing)
+- Expand to multifamily / commercial real estate
+- Add unit/integration tests coverage
